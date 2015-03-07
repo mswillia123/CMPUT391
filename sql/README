@@ -1,0 +1,9 @@
+Radiology Information System Database Schema README
+
+Loading RIS database schema:
+	1.	Load SQLPLUS
+	2.	Execute database schema setup file with command: @setup
+
+Dropping RIS database schema:
+	1.	Load SQLPLUS
+	2.	Execute database schema drop file with command: @ris_drp
