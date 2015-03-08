@@ -1,3 +1,11 @@
+<!-- 
+    Assess user's input to determine if user credentials are correct then 
+    redirects user to appropriate page.
+    
+    Author: Costa Zervos
+    Notes:  Database connection code adapted from CMPUT 391 Lab 6 
+            PHPexample3.html.
+-->
 <html>
     <body>
         <?php
@@ -27,7 +35,13 @@
 
                 // Correct credentials
                 if (($row = oci_fetch_array($stid, OCI_NUM)) != false) {
-                    echo $row[0].' logged in correctly! <br/>';
+                    // Directs user type to correct page
+                    if ($row[2] == 'a') {
+                        header('Location: adminMenu.html');
+                    }
+                    else if ($row[2] == 'r') {
+                        header('Location: radiologistMenu.html');
+                    }
                 }
                 // Incorrect credentials
                 else { echo 'Incorrect credentials! <br/>'; }
