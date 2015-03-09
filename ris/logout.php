@@ -1,8 +1,8 @@
 <?php
 /*
- *	Logs user out of session and returns to the login module.
+ *  Logs user out of session and returns to the login module.
  *
- *	Author: Costa Zervos
+ *  Author: Costa Zervos
  *  Notes:  Code adapted from
  *  http://stackoverflow.com/questions/1243150/php-sessions-to-authenticate-user-on-login-form
  */

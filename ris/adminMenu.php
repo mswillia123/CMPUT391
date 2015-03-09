@@ -1,5 +1,6 @@
 <html>
     <body>
+    Temp Admin Menu <br/>
     <?php
         session_start();
         session_regenerate_id();

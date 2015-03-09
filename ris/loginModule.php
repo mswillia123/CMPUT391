@@ -10,18 +10,18 @@
     <body>
         <?php
             include("PHPconnectionDB.php");
+            // Starts a user session
             session_start();
 
             // Retrieves data from login form
             if (isset($_POST['validate'])) {
                 $USERNAME = $_POST['username'];
-                $PASSWORD = $_POST['password'];
 
                 // Establishes connection with database
                 $conn = connect();
 
 				// Prepares SQL query to retrieve credentials
-                $sql = 'SELECT * FROM users WHERE user_name = \''.$USERNAME.'\' AND password = \''.$PASSWORD.'\'';
+                $sql = 'SELECT * FROM users WHERE user_name = \''.$USERNAME.'\' AND password = \''.$_POST['password'].'\'';
                 // Prepare sql using conn and returns the statement identifier
                 $stid = oci_parse($conn, $sql);
                 
@@ -48,7 +48,10 @@
                     }
                 }
                 // Incorrect credentials
-                else { echo 'Incorrect credentials! <br/>'; }
+                else { 
+                    echo 'Incorrect credentials! <br/>';
+                    echo '<a href="loginModule.html">Back to Login</a>';
+                }
 
                 // Free the statement identifier when closing the connection
                 oci_free_statement($stid);
