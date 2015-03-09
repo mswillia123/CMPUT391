@@ -10,6 +10,7 @@
     <body>
         <?php
             include("PHPconnectionDB.php");
+            session_start();
 
             // Retrieves data from login form
             if (isset($_POST['validate'])) {
@@ -35,9 +36,12 @@
 
                 // Correct credentials
                 if (($row = oci_fetch_array($stid, OCI_NUM)) != false) {
+                    // Stores user's information in session
+                    $_SESSION['user'] = $USERNAME;
+                    $_SESSION['userType'] = $row[2];
                     // Directs user type to correct page
                     if ($row[2] == 'a') {
-                        header('Location: adminMenu.html');
+                        header('Location: adminMenu.php');
                     }
                     else if ($row[2] == 'r') {
                         header('Location: radiologistMenu.html');
