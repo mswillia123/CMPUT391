@@ -1,7 +1,7 @@
 <html>
     <body>
     <!-- TEMP TEXT -->
-    Temp Admin Menu <br/>
+    Temp Search Module <br/>
     <?php
         include("sessionCheck.php");
         include("userInfoDisplay.php");

@@ -1,5 +1,6 @@
 <html>
     <body>
+    <!-- TEMP TEXT -->
     Temp Radiologist Menu <br/>
     <?php
         include("sessionCheck.php");

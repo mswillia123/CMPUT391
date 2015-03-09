@@ -46,6 +46,9 @@
                     else if ($row[2] == 'r') {
                         header('Location: radiologistMenu.php');
                     }
+                    else {
+                        header('Location: searchModule.php');
+                    }
                 }
                 // Incorrect credentials
                 else { 
