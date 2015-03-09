@@ -44,7 +44,7 @@
                         header('Location: adminMenu.php');
                     }
                     else if ($row[2] == 'r') {
-                        header('Location: radiologistMenu.html');
+                        header('Location: radiologistMenu.php');
                     }
                 }
                 // Incorrect credentials

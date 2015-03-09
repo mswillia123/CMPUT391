@@ -1,6 +1,6 @@
 <html>
     <body>
-    Temp Admin Menu <br/>
+    Temp Radiologist Menu <br/>
     <?php
         include("sessionCheck.php");
         include("userInfoDisplay.php");
