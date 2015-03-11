@@ -1,0 +1,17 @@
+<!-- 
+    Login form that asks for user's credentials.
+    
+    Author: Costa Zervos
+    Notes:  Code adapted from CMPUT 391 Lab 6 PHPexample3.html
+-->
+{% extends "base.html" %}
+<html>
+    <body>
+        <h1>Welcome to Radiology Information System</h1>
+        <form name="login" method="post" action="loginModule.php">
+            username : <input type="text" name="username"/> <br/>
+            password : <input type="password" name="password"/><br/>
+            <input type="submit" name="validate" value="OK"/>
+        </form>
+    </body>
+</html>
