@@ -26,21 +26,15 @@
                 }
                 else {
                     if (($row = oci_fetch_array($stid, OCI_NUM)) != false) {
-                        $password = $row[0];
-                        $first_name = $row[1];
-                        $last_name = $row[2];
-                        $address = $row[3];
-                        $email = $row[4];
-                        $phone = $row[5];
                         ?>
                     <!-- NEED TO IMPLEMENT userEditExec.php NEXT -->
-                    <form name="userEdit" method="post" action="userEditExec.php">
-                        firstname : <input type="text" name="first_name" value="<?php echo $first_name; ?>"/> <br/>
-                        lastname : <input type="text" name="last_name" value="<?php echo $last_name; ?>"/> <br/>
-                        address : <input type="text" name="address" value="<?php echo $address; ?>"/> <br/>
-                        email : <input type="text" name="email" value="<?php echo $email; ?>"/> <br/>
-                        phone : <input type="text" name="phone" value="<?php echo $phone; ?>"/> <br/>
-                        password : <input type="password" name="password" value="<?php echo $password; ?>"/><br/>
+                    <form name="userEdit" method="post" action="userEditExe.php">
+                        firstname : <input type="text" name="first_name" value="<?php echo $row[1]; ?>"/> <br/>
+                        lastname : <input type="text" name="last_name" value="<?php echo $row[2]; ?>"/> <br/>
+                        address : <input type="text" name="address" value="<?php echo $row[3]; ?>"/> <br/>
+                        email : <input type="text" name="email" value="<?php echo $row[4]; ?>"/> <br/>
+                        phone : <input type="text" name="phone" value="<?php echo $row[5]; ?>"/> <br/>
+                        password : <input type="password" name="password" value="<?php echo $row[0]; ?>"/><br/>
                         <input type="submit" name="validate" value="OK"/>
                     </form>
                         <?php
