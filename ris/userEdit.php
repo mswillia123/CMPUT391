@@ -3,6 +3,7 @@
 <?php
     include("sessionCheck.php");
     include("PHPconnectionDB.php");
+    include("sqlQuery.php");
     if (!sessionCheck()) {
         echo 'Not logged in! <br/>';
     }
@@ -11,20 +12,9 @@
         $conn = connect();
         // 0 password, 1 first_name, 2 last_name, 3 address, 4 email, 5 phone
         $sql = 'SELECT u.password, p.first_name, p.last_name, p.address, p.email, p.phone FROM users u, persons p WHERE u.person_id = p.person_id AND u.user_name = \''.$_SESSION['user'].'\'';
-        //echo S_SESSION['user'];
-        //$sql = 'SELECT * FROM users, persons WHERE users.person_id = persons.person_id AND user_name = \'leo\'';
-        // Prepare sql using conn and returns the statement identifier
-        $stid = oci_parse($conn, $sql);
-        
-        // Execute a statement returned from oci_parse()
-        $res = oci_execute($stid);
+        $stid = sqlQuery($conn, $sql);
 
-        //if error, retrieve the error using the oci_error() function & output an error
-        if (!$res) {
-            $err = oci_error($stid);
-            echo htmlentities($err['message']);
-        }
-        else {
+        if ($stid) {
             if (($row = oci_fetch_array($stid, OCI_NUM)) != false) {
 ?>
             <form name="userEdit" method="post" action="userEditExe.php">
@@ -57,6 +47,8 @@
                 echo '<a href="loginModule.html">Back to Login</a>';
             }
         }
+        oci_free_statement($stid);
+        oci_close($conn);
     }              
 ?>
 </body>
