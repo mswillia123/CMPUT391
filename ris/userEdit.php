@@ -25,17 +25,23 @@
 ?>
             <form name="userEdit" method="post" action="userEditExe.php">
                 firstname : <input type="text" name="first_name" 
-                                   value="<?php echo $row[1]; ?>"/> <br/>
+                                   value="<?php if (isset($row[1])) {
+                                                    echo $row[1];} ?>"/> <br/>
                 lastname : <input type="text" name="last_name" 
-                                  value="<?php echo $row[2]; ?>"/> <br/>
+                                  value="<?php if (isset($row[2])) {
+                                                   echo $row[2];} ?>"/> <br/>
                 address : <input type="text" name="address" 
-                                 value="<?php echo $row[3]; ?>"/> <br/>
+                                 value="<?php if (isset($row[3])) {
+                                                  echo $row[3];} ?>"/> <br/>
                 email : <input type="text" name="email" 
-                               value="<?php echo $row[4]; ?>"/> <br/>
+                               value="<?php if (isset($row[4])) {
+                                                echo $row[4];} ?>"/> <br/>
                 phone : <input type="text" name="phone" 
-                               value="<?php echo $row[5]; ?>"/> <br/>
+                               value="<?php if (isset($row[5])) {
+                                                echo $row[5];} ?>"/> <br/>
                 password : <input type="password" name="password" 
-                                  value="<?php echo $row[0]; ?>"/><br/>
+                                  value="<?php if (isset($row[0])) {
+                                                   echo $row[0];} ?>"/><br/>
                 <input type="submit" name="validate" value="OK"/>
                 <!-- Cancel redirects to usertype's mainpage -->
                 <input type="button" name="Cancel" value="Cancel" 
