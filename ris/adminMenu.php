@@ -12,5 +12,9 @@
             userInfoDisplay();
         }
     ?>
+    
+    <p>
+    <a href="manageUsers.php">User Management</a>
+    </p>
     </body>
 </html>
