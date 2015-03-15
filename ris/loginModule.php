@@ -3,13 +3,12 @@
     redirects user to appropriate page.
     
     Author: Costa Zervos
-    Notes:  Database connection code adapted from CMPUT 391 Lab 6 
-            PHPexample3.html.
 -->
 <html>
     <body>
         <?php
             include("PHPconnectionDB.php");
+            include("sqlQuery.php");
             // Starts a user session
             session_start();
 
@@ -19,46 +18,39 @@
 
                 // Establishes connection with database
                 $conn = connect();
-
-				// Prepares SQL query to retrieve credentials
-                $sql = 'SELECT * FROM users WHERE user_name = \''.$USERNAME.'\' AND password = \''.$_POST['password'].'\'';
-                // Prepare sql using conn and returns the statement identifier
-                $stid = oci_parse($conn, $sql);
+                // Prepares SQL query to retrieve credentials
+                $sql = 'SELECT * FROM users WHERE user_name = \''.$USERNAME.'\' 
+                    AND password = \''.$_POST['password'].'\'';
+                // Executes sql query
+                $stid = sqlQuery($conn, $sql);
                 
-                // Execute a statement returned from oci_parse()
-                $res = oci_execute($stid);
+                if ($stid) {
+                    // Correct credentials
+                    if (($row = oci_fetch_array($stid, OCI_NUM)) != false) {
+                        // Stores user's information in session
+                        $_SESSION['user'] = $USERNAME;
+                        $_SESSION['userType'] = $row[2];
+                        // Directs usertype to correct page
+                        if ($row[2] == 'a') {
+                            header('Location: adminMenu.php');
+                        }
+                        else if ($row[2] == 'r') {
+                            header('Location: radiologistMenu.php');
+                        }
+                        else {
+                            header('Location: searchModule.php');
+                        }
+                    }
+                    // Incorrect credentials
+                    else { 
+                        echo 'Incorrect credentials! <br/>';
+                        echo '<a href="loginModule.html">Back to Login</a>';
+                    }
 
-                //if error, retrieve the error using the oci_error() function & output an error
-                if (!$res) {
-                    $err = oci_error($stid);
-                    echo htmlentities($err['message']);
-                } 
-
-                // Correct credentials
-                if (($row = oci_fetch_array($stid, OCI_NUM)) != false) {
-                    // Stores user's information in session
-                    $_SESSION['user'] = $USERNAME;
-                    $_SESSION['userType'] = $row[2];
-                    // Directs user type to correct page
-                    if ($row[2] == 'a') {
-                        header('Location: adminMenu.php');
-                    }
-                    else if ($row[2] == 'r') {
-                        header('Location: radiologistMenu.php');
-                    }
-                    else {
-                        header('Location: searchModule.php');
-                    }
+                    // Free the statement identifier when closing the connection
+                    oci_free_statement($stid);
+                    oci_close($conn);
                 }
-                // Incorrect credentials
-                else { 
-                    echo 'Incorrect credentials! <br/>';
-                    echo '<a href="loginModule.html">Back to Login</a>';
-                }
-
-                // Free the statement identifier when closing the connection
-                oci_free_statement($stid);
-                oci_close($conn);
             }
         ?>
     </body>
