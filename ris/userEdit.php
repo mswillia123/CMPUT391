@@ -10,10 +10,7 @@
     include("sessionCheck.php");
     include("PHPconnectionDB.php");
     include("sqlQuery.php");
-    if (!sessionCheck()) {
-        echo 'Not logged in! <br/>';
-    }
-    else {
+    if (sessionCheck()) {
         // Establishes connection with database
         $conn = connect();
         // 0 password, 1 first_name, 2 last_name, 3 address, 4 email, 5 phone

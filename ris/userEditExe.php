@@ -10,10 +10,7 @@
     include("sessionCheck.php");
     include("PHPconnectionDB.php");
     include("sqlQuery.php");
-    if (!sessionCheck()) {
-        echo 'Not logged in! <br/>';
-    }
-    else {
+    if (sessionCheck()) {
         // Retrieves data from userEdit form
         if (isset($_POST['validate'])) {
             $conn = connect();

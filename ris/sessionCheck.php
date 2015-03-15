@@ -12,6 +12,7 @@
         session_start();
         session_regenerate_id();
         if(!isset($_SESSION['user'])) {
+            echo 'Not logged in! <br/>';
             return false;
         }
         return true;
