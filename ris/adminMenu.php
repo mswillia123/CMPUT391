@@ -1,7 +1,6 @@
 <html>
     <body>
-    <!-- TEMP TEXT -->
-    Temp Admin Menu <br/>
+        <h2>Administrator Menu</h2>
     <?php
         include("sessionCheck.php");
         include("userInfoDisplay.php");
@@ -10,7 +9,9 @@
         }
         else {
             userInfoDisplay();
+            echo '<a href="reportModule.php">Report Generator</a>';
         }
     ?>
+    
     </body>
 </html>

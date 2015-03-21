@@ -20,5 +20,6 @@
         echo ' - ';
         // Displays logout link
         echo '<a href="logout.php">Logout</a>';
+        echo'<br/><br/>';
     }
 ?>
