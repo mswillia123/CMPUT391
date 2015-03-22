@@ -79,3 +79,83 @@ INSERT INTO radiology_record VALUES
 (3, 8, 5, 6, 'X-Ray', TO_DATE('20160102'), TO_DATE('20160110'), 'Broken arm', 'Scan of right arm.');
 INSERT INTO radiology_record VALUES
 (4, 4, 2, 3, 'X-Ray', TO_DATE('20150307'), TO_DATE('20160202'), 'Broken arm', 'Scan of right arm.');
+
+/*
+ *	Insert data into radiology_search table
+ *  
+ *  (record_id, patient_id, patient_name, diagnosis, description)
+ */
+DECLARE 
+    patient_name varchar(49);
+    rs_diagnosis varchar(128);
+    rs_description varchar(1024);
+
+BEGIN
+    -- Record 1
+    SELECT first_name || ' ' || last_name INTO patient_name
+    FROM   persons
+    WHERE  person_id = 4;
+    
+    SELECT diagnosis INTO rs_diagnosis
+    FROM   radiology_record
+    WHERE  record_id = 1;
+
+    SELECT description INTO rs_description
+    FROM   radiology_record
+    WHERE  record_id = 1;
+    
+    INSERT INTO radiology_search VALUES
+    (1, 4, patient_name, rs_diagnosis, rs_description);
+    
+    -- Record 2
+    SELECT first_name || ' ' || last_name INTO patient_name
+    FROM   persons
+    WHERE  person_id = 7;
+    
+    SELECT diagnosis INTO rs_diagnosis
+    FROM   radiology_record
+    WHERE  record_id = 2;
+
+    SELECT description INTO rs_description
+    FROM   radiology_record
+    WHERE  record_id = 2;
+    
+    INSERT INTO radiology_search VALUES
+    (2, 7, patient_name, rs_diagnosis, rs_description);
+    
+    -- Record 3
+    SELECT first_name || ' ' || last_name INTO patient_name
+    FROM   persons
+    WHERE  person_id = 8;
+    
+    SELECT diagnosis INTO rs_diagnosis
+    FROM   radiology_record
+    WHERE  record_id = 3;
+
+    SELECT description INTO rs_description
+    FROM   radiology_record
+    WHERE  record_id = 3;
+    
+    INSERT INTO radiology_search VALUES
+    (3, 8, patient_name, rs_diagnosis, rs_description);
+    
+    -- Record 4
+    SELECT first_name || ' ' || last_name INTO patient_name
+    FROM   persons
+    WHERE  person_id = 4;
+    
+    SELECT diagnosis INTO rs_diagnosis
+    FROM   radiology_record
+    WHERE  record_id = 4;
+
+    SELECT description INTO rs_description
+    FROM   radiology_record
+    WHERE  record_id = 4;
+    
+    INSERT INTO radiology_search VALUES
+    (4, 4, patient_name, rs_diagnosis, rs_description);
+    
+END;
+/
+
+commit;

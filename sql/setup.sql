@@ -7,6 +7,7 @@
 
 DROP TABLE family_doctor;
 DROP TABLE pacs_images;
+DROP TABLE radiology_search;
 DROP TABLE radiology_record;
 DROP TABLE users;
 DROP TABLE persons;
@@ -83,4 +84,26 @@ CREATE TABLE pacs_images (
    PRIMARY KEY(record_id,image_id),
    FOREIGN KEY(record_id) REFERENCES radiology_record
 );
+
+/*
+ * creates search table based off radiology_record and person
+ */
+CREATE TABLE radiology_search (
+   record_id   int,
+   patient_id   int,
+   patient_name  varchar(49),
+   diagnosis    varchar(128),
+   description   varchar(1024),
+   PRIMARY KEY(record_id),
+   FOREIGN KEY(record_id) REFERENCES radiology_record,
+   FOREIGN KEY(patient_id) REFERENCES persons
+);
+/*
+ * creates inverted indexes on patient_name, diagnosis, and description
+ * Code adapted from sample code on eclass: http://webdocs.cs.ualberta.ca/~yuan/servlets/inverted/myIndex.sql
+ */
+CREATE INDEX name_index ON radiology_search(patient_name) INDEXTYPE IS CTXSYS.CONTEXT;
+CREATE INDEX diagnosis_index ON radiology_search(diagnosis) INDEXTYPE IS CTXSYS.CONTEXT;
+CREATE INDEX description_index ON radiology_search(description) INDEXTYPE IS CTXSYS.CONTEXT;
+
 
