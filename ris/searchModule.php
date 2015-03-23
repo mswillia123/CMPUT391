@@ -16,6 +16,7 @@
         include("sqlQuery.php");
         include("sessionCheck.php");
         include("userInfoDisplay.php");
+        include("displayTable.php");
         if (sessionCheck()) {
             userInfoDisplay();
             // Search information recieved
@@ -78,56 +79,7 @@
                         $stid = sqlQuery($conn, $sql);
 
                         if ($stid) {
-                            $resultsFlag = 0;
-                            while ($row = oci_fetch_array($stid, OCI_NUM)) {
-                                // Display table of results
-                                if ($resultsFlag == 0) {
-                                    ?>
-                                    <table border=2 style="width:80%">
-                                        <tr>
-                                            <th>Rank</th>
-                                            <th>Record ID</th>
-                                            <th>Patient</th>
-                                            <th>Doctor</th>
-                                            <th>Radiologist</th>
-                                            <th>Test Type</th>
-                                            <th>Prescribing Date (dd-mmm-yy)</th>
-                                            <th>Testing Date (dd-mmm-yy)</th>
-                                            <th>Diagnosis</th>
-                                            <th>Description</th>
-                                        </tr>
-                                        <tr>
-                                            <?php
-                                            for ($i = 0; $i < 10; $i++) {
-                                                ?>
-                                                <td><?php echo $row[$i]; ?></td>
-                                                <?php
-                                            }
-                                            ?>
-                                        </tr>
-                                        <?php
-                                        $resultsFlag = 1;
-                                    } else {
-                                        ?>
-                                        <tr>
-                                            <?php
-                                            for ($i = 0; $i < 10; $i++) {
-                                                ?>
-                                                <td><?php echo $row[$i]; ?></td>
-                                                <?php
-                                            }
-                                            ?>
-                                        </tr>
-                                        <?php
-                                    }
-                                }
-                                if ($resultsFlag == 0) {
-                                    echo "No results found!<br/>";
-                                } else {
-                                    ?>
-                                </table>
-                                <?php
-                            }
+                            searchTable($stid);
 
                             oci_free_statement($stid);
                             oci_close($conn);
