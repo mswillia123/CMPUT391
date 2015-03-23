@@ -2,6 +2,11 @@
     Search radiology records.
     
     Author: Costa
+
+    Rank Query SELECT statements adapted from:
+    http://stackoverflow.com/questions/8352796/ora-29908-missing-primary-invocation-for-ancillary-operator
+    Author: Paul Kar.
+    Date: 3/22/15
 -->
 <html>
     <body>
@@ -53,13 +58,88 @@
                     echo 'Please enter a valid ending time period.<br/>';
                     echo '<a href="searchModule.php">Back</a>';
                 } else {
-                    
+                    $conn = connect();
+
+                    // 
+                    if (($keywords != '') and ( $start_date == '')) {
+                        $sql = "SELECT rs.rank, rr.record_id, rs.patient_name, pd.first_name || ' ' || pd.last_name AS doc_name, pr.first_name || ' ' || pr.last_name AS rad_name, rr.test_type, rr.prescribing_date, rr.test_date, rr.diagnosis, rr.description
+                            FROM   radiology_record rr, persons pd, persons pr, 
+                            (   SELECT record_id, 6*SCORE(1) + 3*SCORE(2) + SCORE(3) AS rank, patient_name
+                            FROM   radiology_search
+                            WHERE  CONTAINS(patient_name, '" . $keywords . "', 1)>0
+                            OR  CONTAINS(diagnosis, '" . $keywords . "', 2)>0
+                            OR  CONTAINS(description, '" . $keywords . "', 3)>0
+                            ) rs
+                            WHERE rr.record_id = rs.record_id
+                            AND rr.doctor_id = pd.person_id
+                            AND rr.radiologist_id = pr.person_id 
+                            ORDER BY rs.rank";
+
+                        $stid = sqlQuery($conn, $sql);
+
+                        if ($stid) {
+                            $resultsFlag = 0;
+                            while ($row = oci_fetch_array($stid, OCI_NUM)) {
+                                // Display table of results
+                                if ($resultsFlag == 0) {
+                                    ?>
+                                    <table border=2 style="width:80%">
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Record ID</th>
+                                            <th>Patient</th>
+                                            <th>Doctor</th>
+                                            <th>Radiologist</th>
+                                            <th>Test Type</th>
+                                            <th>Prescribing Date (dd-mmm-yy)</th>
+                                            <th>Testing Date (dd-mmm-yy)</th>
+                                            <th>Diagnosis</th>
+                                            <th>Description</th>
+                                        </tr>
+                                        <tr>
+                                            <?php
+                                            for ($i = 0; $i < 10; $i++) {
+                                                ?>
+                                                <td><?php echo $row[$i]; ?></td>
+                                                <?php
+                                            }
+                                            ?>
+                                        </tr>
+                                        <?php
+                                        $resultsFlag = 1;
+                                    } else {
+                                        ?>
+                                        <tr>
+                                            <?php
+                                            for ($i = 0; $i < 10; $i++) {
+                                                ?>
+                                                <td><?php echo $row[$i]; ?></td>
+                                                <?php
+                                            }
+                                            ?>
+                                        </tr>
+                                        <?php
+                                    }
+                                }
+                                if ($resultsFlag == 0) {
+                                    echo "No results found!<br/>";
+                                } else {
+                                    ?>
+                                </table>
+                                <?php
+                            }
+
+                            oci_free_statement($stid);
+                            oci_close($conn);
+                            echo '<br/><a href="searchModule.php">Back</a>';
+                        }
+                    }
                 }
             }
             // Enter search information
             else {
                 ?>
-        <b>Please enter search keywords <u>and/or</u> time period to search:</b> 
+                <b>Please enter search keywords <u>and/or</u> time period to search:</b> 
                 <br/><br/>
                 <form name="searchQuery" method="post" action="searchModule.php">
                     Search keywords: <input type="text" name="keywords" style="width: 30%"/> <br/>
