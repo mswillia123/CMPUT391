@@ -6,4 +6,10 @@ app/[Cc]onfig/core.php
 app/[Cc]onfig/database.php
 !empty
 *~
+
 /nbproject/
+
+.project
+.settings
+ris/PHPconnectionDB.php
+
