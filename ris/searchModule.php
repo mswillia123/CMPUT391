@@ -2,11 +2,6 @@
     Search radiology records.
     
     Author: Costa
-
-    Rank Query SELECT statements adapted from:
-    http://stackoverflow.com/questions/8352796/ora-29908-missing-primary-invocation-for-ancillary-operator
-    Author: Paul Kar.
-    Date: 3/22/15
 -->
 <html>
     <body>
