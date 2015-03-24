@@ -17,74 +17,31 @@
         include("sessionCheck.php");
         include("userInfoDisplay.php");
         include("displayTable.php");
+        include("searchFunctions.php");
+
         if (sessionCheck()) {
             userInfoDisplay();
             // Search information recieved
             if (isset($_POST['validate'])) {
-                $pattern = '/^[1-2][0-9][0-9][0-9][\-][0-1][0-9][\-][0-3][0-9]$/';
                 $keywords = $_POST['keywords'];
+                $ordering = $_POST['ranking'];
+                $time_ref = $_POST['time_ref'];
                 $start_date = $_POST['start_date'];
                 $end_date = $_POST['end_date'];
-                $ordering = $_POST['ranking'];
+                $pattern = '/^[1-2][0-9][0-9][0-9][\-][0-1][0-9][\-][0-3][0-9]$/';
 
-                /* MIGHT NOT NEED THIS SINCE
-                 * CONTAINS FUNCTION AUTOMATICALLY SEPARATES
-                 * SPACED INPUT AND CONSIDERS IT A PHRASE
-                 */
-                // Explodes and trims keywords
-                if ($keywords != '') {
-                    $keyword_list = explode(',', $keywords);
-                    $list_size = count($keyword_list);
-
-                    // echo $list_size;
-                    for ($i = 0; $i < $list_size; $i++) {
-                        $keyword_list[$i] = trim($keyword_list[$i]);
-                        //echo $keyword_list[$i];
-                    }
-                }
                 // Validate input
-                if ($keywords == '' and $ordering == 'rank') {
-                    echo 'Cannot search by closest match without keywords.<br/>';
-                    echo '<a href="searchModule.php">Back</a>';
-                } else if (($start_date == '') and ( $end_date != '')) {
-                    echo 'Please enter a starting time period.<br/>';
-                    echo '<a href="searchModule.php">Back</a>';
-                } else if (($start_date != '') and ( $end_date == '')) {
-                    echo 'Please enter an ending time period.<br/>';
-                    echo '<a href="searchModule.php">Back</a>';
-                } else if ($start_date != '' and ! preg_match($pattern, $start_date)) {
-                    echo 'Please enter a valid starting time period.<br/>';
-                    echo '<a href="searchModule.php">Back</a>';
-                } else if ($end_date != '' and ! preg_match($pattern, $end_date)) {
-                    echo 'Please enter a valid ending time period.<br/>';
-                    echo '<a href="searchModule.php">Back</a>';
-                } else {
+                if (verifyInput($keywords, $ordering, $start_date, $end_date, $pattern)) {
                     $conn = connect();
 
-                    // 
-                    if (($keywords != '') and ( $start_date == '')) {
-                        $sql = "SELECT rs.rank, rr.record_id, rs.patient_name, pd.first_name || ' ' || pd.last_name AS doc_name, pr.first_name || ' ' || pr.last_name AS rad_name, rr.test_type, rr.prescribing_date, rr.test_date, rr.diagnosis, rr.description
-                            FROM   radiology_record rr, persons pd, persons pr, 
-                            (   SELECT record_id, 6*SCORE(1) + 3*SCORE(2) + SCORE(3) AS rank, patient_name
-                            FROM   radiology_search
-                            WHERE  CONTAINS(patient_name, '" . $keywords . "', 1)>0
-                            OR  CONTAINS(diagnosis, '" . $keywords . "', 2)>0
-                            OR  CONTAINS(description, '" . $keywords . "', 3)>0
-                            ) rs
-                            WHERE rr.record_id = rs.record_id
-                            AND rr.doctor_id = pd.person_id
-                            AND rr.radiologist_id = pr.person_id 
-                            ORDER BY rs.rank";
+                    $sql = generateSearchQuery($_SESSION['userType'], $_SESSION['person_id'], $keywords, $ordering, $time_ref, $start_date, $end_date);
+                    $stid = sqlQuery($conn, $sql);
+                    if ($stid) {
+                        searchTable($stid);
 
-                        $stid = sqlQuery($conn, $sql);
-
-                        if ($stid) {
-                            searchTable($stid);
-
-                            oci_free_statement($stid);
-                            oci_close($conn);
-                            echo '<br/><a href="searchModule.php">Back</a>';
-                        }
+                        oci_free_statement($stid);
+                        oci_close($conn);
+                        echo '<br/><a href="searchModule.php">Back</a>';
                     }
                 }
             }
@@ -94,37 +51,47 @@
                 <b>Please enter search keywords <u>and/or</u> time period to search:</b> 
                 <br/><br/>
                 <form name="searchQuery" method="post" action="searchModule.php">
-                    Search keywords: <input type="text" name="keywords" style="width: 30%"/> <br/>
-                    Time Period Start (yyyy-mm-dd): <input type="text" name="start_date"/> <br/>
-                    Time Period End (yyyy-mm-dd): <input type="text" name="end_date"/> <br/>
                     <fieldset style="width: 35%">
-                        <legend> Result Ordering </legend>
-                        <input type="radio" name="ranking" value="rank" checked>Closest Match
+                        <legend> <b>Search Criteria</b> </legend>
+                        <i>Keywords:</i> <input type="text" name="keywords" style="width: 100%"/> <br/>
+                        <i>Time Period:</i> <br/>
+                        Start Date (yyyy-mm-dd) <input type="text" name="start_date"/> <br/>
+                        End Date (yyyy-mm-dd)&nbsp; <input type="text" name="end_date"/> <br/>
+                    </fieldset>
+                    <fieldset style="width: 35%">
+                        <legend> <b>Date Reference</b> </legend>
+                        <input type="radio" name="time_ref" value="t_date" checked>Test Date
                         <br>
-                        <input type="radio" name="ranking" value="time_new">Test Date (Most Recent)
+                        <input type="radio" name="time_ref" value="p_date">Prescription Date
+                    </fieldset>
+                    <fieldset style="width: 35%">
+                        <legend> <b>Search Result Order</b></legend>
+                        <input type="radio" name="ranking" value="rank" checked>Relevance (Requires Keywords)
                         <br>
-                        <input type="radio" name="ranking" value="time_old">Test Date (Oldest)
+                        <input type="radio" name="ranking" value="time_new">Date (Newest to Oldest)
+                        <br>
+                        <input type="radio" name="ranking" value="time_old">Date (Oldest to Newest)
                     </fieldset>
                     <input type="submit" name="validate" value="OK"/>
                     <!-- Cancel redirects to administrator menu -->
                     <input type="button" name="Cancel" value="Cancel" 
-        <?php
-        if ($_SESSION['userType'] == 'a') {
-            echo 'onclick="window.location = 
+                    <?php
+                    if ($_SESSION['userType'] == 'a') {
+                        echo 'onclick="window.location = 
                                   \'adminMenu.php\' "';
-        } else if ($_SESSION['userType'] == 'r') {
-            echo 'onclick="window.location = 
+                    } else if ($_SESSION['userType'] == 'r') {
+                        echo 'onclick="window.location = 
                                   \'radiologistMenu.php\' "';
-        } else {
-            echo 'onclick="window.location = 
+                    } else {
+                        echo 'onclick="window.location = 
                                   \'logout.php\' "';
-        }
-        ?>
+                    }
+                    ?>
                            />
                 </form>
-                    <?php
-                }
+                <?php
             }
-            ?>
+        }
+        ?>
     </body>
 </html>

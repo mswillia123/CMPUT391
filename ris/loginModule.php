@@ -30,6 +30,7 @@
                 // Stores user's information in session
                 $_SESSION['user'] = $USERNAME;
                 $_SESSION['userType'] = $row[2];
+                $_SESSION['person_id'] = $row[3];
                 // Directs usertype to correct page
                 if ($row[2] == 'a') {
                     header('Location: adminMenu.php');
