@@ -9,7 +9,8 @@
         }
         else {
             userInfoDisplay();
-            echo '<a href="reportModule.php">Report Generator</a>';
+            echo '<a href="reportModule.php">Report Generator</a><br/>';
+            echo '<a href="searchModule.php">Search</a><br/>';
         }
     ?>
     
