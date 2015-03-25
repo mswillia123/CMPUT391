@@ -1,6 +1,6 @@
 <html>
     <body>
-    <h2>Administrator Menu</h2>
+    <h2>Radiologist Menu</h2>
     <?php
         include("sessionCheck.php");
         include("userInfoDisplay.php");
