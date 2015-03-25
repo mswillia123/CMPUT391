@@ -1,14 +1,9 @@
 Radiology Information System Database Schema README
 
-Setup RIS database schema:
-	1.	Load SQLPLUS
-	2.	Execute database schema setup file with command: @setup
+Installing RIS database:
+    1.  Load SQLPLUS
+    2.  Execute RIS setup file with command: @ris_setup
 
-Dropping RIS database schema:
+Uninstalling RIS database schema:
 	1.	Load SQLPLUS
 	2.	Execute database schema drop file with command: @ris_drp
-
-Adding data to RIS database:
-	1.	Load SQLPLUS
-	2.	Setup RIS database
-	3.	Execute database data file with command: @ris_dat
