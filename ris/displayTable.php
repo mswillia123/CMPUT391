@@ -106,13 +106,14 @@ function displayThumbnails($row) {
             $regular = $row2[2]->load();
             $full = $row2[3]->load();
             
-            // Displays image in form to make it clickable
-            // Sends other sized loaded blobs when clicked
-            echo '<form method="POST" action="imageZoom.php" target="_blank">';
+            // Displays image in form and sends other sized loaded blobs when clicked
+            echo '<span style="float:left">';
+            echo '<form method="POST" action="imageZoom.php" target="_blank" >';
             echo '<input type="image" src="data:image/jpeg;base64,'.base64_encode( $thumbnail ).'" name="thumbnail" />';
             echo '<input type="hidden" name="regular" value="'.base64_encode( $regular ).'" />';
             echo '<input type="hidden" name="full" value="'.base64_encode( $full ).'" />';
             echo '</form>';
+            echo '</span>';
             $image_found = true;
         }
         if (!$image_found) {
