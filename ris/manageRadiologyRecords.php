@@ -226,7 +226,7 @@ if (!sessionCheck()) {
 					<td><div align="center" ><?= $row["DESCRIPTION"]; ?></div></td>							    
 					<td align="center"><a href="<?= $_SERVER["PHP_SELF"]; ?>?Action=Edit&keyID=<?= $row["RECORD_ID"]; ?>"><img src="edit-16x16.png"></a></td>
 					<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?= $_SERVER["PHP_SELF"]; ?>?Action=Del&keyID=<?= $row["RECORD_ID"]; ?>';}"><img src="delete-16x16.png"></a></td>
-					<td align="center"><a href="uploadingModule.php?recordID=<?= $row["RECORD_ID"]; ?>"><img src="jpeg-16x16.png"></a></td>								
+					<td align="center"><a href="imageUploadModule.php?recordID=<?= $row["RECORD_ID"]; ?>"><img src="jpeg-16x16.png"></a></td>								
 				</tr>
 			  
 				<?php

@@ -17,18 +17,18 @@ function multi_image($recordID, $imageType){
 	oci_bind_by_name($stid, ':recordID', $recordID);
 	oci_bind_by_name($stid, ':imageType', $imageType);
 	oci_execute($stid);
-	echo "<table>";
+	echo "<table><tr>";
 	while($row = oci_fetch_array($stid, OCI_ASSOC)){
 		if (!$row) {
 			header('Status: 404 Not Found');
 		} else {
 		// redirect to imageView.php to render image with proper content type
 ?>
-		<tr><td><img src="imageView.php?recordID=<?=$recordID?>&imageID=<?=$row["IMAGE_ID"]?>&imageType=<?=$imageType?>" /></td><td><?=$imageType?></td></tr>
+		<td><?=$row["IMAGE_ID"]?></td><td><img src="imageView.php?recordID=<?=$recordID?>&imageID=<?=$row["IMAGE_ID"]?>&imageType=<?=$imageType?>" /></td>
 		<?php 
 		}
 	}
-	echo "</table>";
+	echo "</tr></table>";
 	oci_close($conn);
 }
 ?>
