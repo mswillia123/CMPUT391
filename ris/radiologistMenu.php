@@ -9,6 +9,7 @@
         }
         else {
             userInfoDisplay();
+            echo '<a href="manageRadiologyRecords.php">Radiology Records</a><br/>';
             echo '<a href="searchModule.php">Search</a><br/>';
         }
     ?>
