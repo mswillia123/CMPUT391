@@ -26,6 +26,7 @@ function resize($width, $height){
     $width, $height,
     $w, $h);
   /* Save image */
+  
   switch ($_FILES['image']['type']) {
     case 'image/jpeg':
       imagejpeg($tmp, $path, 100);
@@ -40,7 +41,8 @@ function resize($width, $height){
       exit;
       break;
   }
-  return $path;
+  
+  return $tmp;
   /* cleanup memory */
   imagedestroy($image);
   imagedestroy($tmp);

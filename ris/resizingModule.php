@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_FILES['image'])) {
       foreach ($sizes as $w => $h) {
         $files[] = resize($w, $h);
       }
-
+	//echo $files[0];
     } else {
       $msg = 'Unsupported file';
     }
