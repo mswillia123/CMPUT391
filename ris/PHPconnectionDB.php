@@ -6,7 +6,7 @@
  */
 function connect(){
     // Enter your OracleDB credentials
-    $conn = oci_connect('user', 'password');
+    $conn = oci_connect('test-php', 'test-php', 'localhost/XE');
     if (!$conn) {
         $e = oci_error();
         trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
