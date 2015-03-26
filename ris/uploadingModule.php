@@ -96,7 +96,7 @@ error check for unique key error
 		$imageID = $_POST["txtEditimageID"];		
 		// Database connection
 		$conn = connect();
-		  //echo "<h1>Hello " . $recordID . "</h1>";
+
 		  
 		  // Delete (overwrite) any existing BLOB with the same record and image ID's		  
 		  $query = "delete from pacs_images where record_id = :recordID and image_id = :imageID";
@@ -105,26 +105,14 @@ error check for unique key error
 		  oci_bind_by_name($stmt, ':imageID', $imageID);
 		  $e = oci_execute($stmt);
 		  oci_free_statement($stmt);
-		
-		  //$blobdata = resize(100,100);
 		  $imgfile = $_FILES['image']['tmp_name'];
 		  
-		  //echo $imagefile;
-		  // Insert the BLOB from PHP's temporary upload area
-		  //CAN DO A SWITCH HERE BASED ON INPUT FILE TYPE
-		  //$tmpimg = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-		  //$tmpimg2 = $tmpimg;
-		  //$imgfile = resize(50, $_FILES['image']['tmp_name'] );
-		  //$imgfile = $_FILES['image']['tmp_name'];
-		 //uploadImage($imgfile, $recordID, $imageID, 'FULL_SIZE');
-		  //$imgfile = $_FILES['image']['tmp_name'];
-		 	//$imgfile2 = resize(200, $imgfile);
-		 //uploadImage($imgfile2, $recordID, $imageID, 'REGULAR_SIZE');
-		  //$tmpimg2 = $tmpimg;
-		 //$imgfile = $_FILES['image']['tmp_name'];
+		  //**Resizing is currently broken
+		
 		  //$imgfile2 = resize(50, $imgfile);
+		  //$imgfile2 = resize(200, $imgfile);
 		  uploadImage($imgfile, $recordID, $imageID, 'THUMBNAIL');		  
-		  //imagedestroy($tmpimg);
+
 		  header('Location: uploadingModule.php?recordID='.$recordID.'');
 	}
 	
