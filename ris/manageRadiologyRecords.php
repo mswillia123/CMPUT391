@@ -1,4 +1,4 @@
-<!--TODO*******************
+<!--TODO
 	error checking
 	fix date field population issue (blank insert to db) on edit
 	close connections
@@ -29,7 +29,7 @@ if (!sessionCheck()) {
 } else {
 	error_reporting(E_ALL ^ E_NOTICE);
 	$conn = connect();
-	// Add record button selected: Add a new DB record from the filled form data
+	// Add record button selected: Add a new radiology record from the filled form data
 	if ($_POST["hdnCmd"] == "Add") {
 		$str = "insert into radiology_record (record_id, patient_id, doctor_id, radiologist_id, test_type, prescribing_date, test_date, diagnosis, description) ";
 		$str .= "values ('" . $_POST["txtAddrecord_id"] . "' ";
@@ -50,6 +50,38 @@ if (!sessionCheck()) {
 			$e = oci_error($stid);
 			echo "Error Add [" . $e['message'] . "]";
 		}
+		
+		// Insert related record into radiology_search table
+		$str = "DECLARE	patient_name varchar(49);"; // rs_diagnosis varchar(128); rs_description varchar(1024);";
+		$str .= "BEGIN ";
+		$str .="SELECT first_name || ' ' || last_name INTO patient_name ";
+		$str .="FROM   persons ";
+		$str .="WHERE  person_id = ". $_POST["txtAddpatient_id"].";";	
+		
+		/*
+		$str .="SELECT diagnosis INTO rs_diagnosis ";
+		$str .="FROM   radiology_record ";
+		$str .="WHERE  record_id = ". $_POST["txtAddrecord_id"] .";";
+		
+		$str .="SELECT description INTO rs_description ";
+		$str .="FROM   radiology_record ";
+		$str .="WHERE  record_id = ". $_POST["txtAddrecord_id"] .";";
+		*/
+		
+		$str .="INSERT INTO radiology_search VALUES";
+		$str .="(". $_POST["txtAddrecord_id"] .", ". $_POST["txtAddpatient_id"] .", patient_name, '" . $_POST["txtAdddiagnosis"] . "', '" . $_POST["txtAdddescription"] . "'); END;";
+		
+		echo $str;
+		$stid = oci_parse($conn, $str);
+		$res  = oci_execute($stid);
+		if ($res) {
+			oci_commit($conn);
+		} else {
+			$e = oci_error($stid);
+			echo "Error Add [" . $e['message'] . "]";
+		}
+		
+		
 	}
 	// Update button selected: Update existing DB record from edited changes to row
 	if ($_POST["hdnCmd"] == "Update") {
@@ -72,10 +104,45 @@ if (!sessionCheck()) {
 			$e = oci_error($stid);
 			echo "Error Update [" . $e['message'] . "]";
 		}
+		
+		// Update related record in radiology_search table
+		$str = "DECLARE	patient_name varchar(49);"; // rs_diagnosis varchar(128); rs_description varchar(1024);";
+		$str .= "BEGIN ";
+		$str .="SELECT first_name || ' ' || last_name INTO patient_name ";
+		$str .="FROM   persons ";
+		$str .="WHERE  person_id = ". $_POST["txtEditpatient_id"].";";
+		
+		$str .="update radiology_search set ";
+		$str .= "patient_id = '" . $_POST["txtEditpatient_id"] . "' ";
+		$str .= ",patient_name = patient_name ";
+		$str .= ",diagnosis = '" . $_POST["txtEditdiagnosis"] . "' ";
+		$str .= ",description = '" . $_POST["txtEditdescription"] . "'";
+		$str .= "where record_id = '". $_POST["txtEditrecord_id"] ."'; END; ";
+		
+		echo $str;
+		$stid = oci_parse($conn, $str);
+		$res  = oci_execute($stid);
+		if ($res) {
+			oci_commit($conn);
+		} else {
+			$e = oci_error($stid);
+			echo "Error Add [" . $e['message'] . "]";
+		}
 	}
 	
 	// Delete button selected: Delete an existing record
 	if ($_GET["Action"] == "Del") {
+		
+		$str  = "delete from radiology_search where record_id = '" . $_GET["keyID"] . "' ";
+		$stid = oci_parse($conn, $str);
+		$res  = oci_execute($stid);
+		if ($res) {
+			oci_commit($conn);
+		} else {
+			$e = oci_error($stid);
+			echo "Error Delete [" . $e['message'] . "]";
+		}		
+		
 		$str  = "delete from radiology_record where record_id = '" . $_GET["keyID"] . "' ";
 		$stid = oci_parse($conn, $str);
 		$res  = oci_execute($stid);
@@ -85,6 +152,7 @@ if (!sessionCheck()) {
 			$e = oci_error($stid);
 			echo "Error Delete [" . $e['message'] . "]";
 		}
+
 	}
 	
 	// Select all records, render and display all records and form elements for editing, adding, deleting records
@@ -98,21 +166,13 @@ if (!sessionCheck()) {
 	
 ?>             
 		<h2>Radiology Record Module</h2>					
-		<div class="tabGroup">
-		<input type="radio" name="tabGroup1" id="rad1" class="tab1" onclick="document.location.href='manageUsers.php'" />
-		<label for="rad1">Radiology Record</label>				 
-		<input type="radio" name="tabGroup1" id="rad2" class="tab2" checked="checked"/>
-		<label for="rad2">Upload Images</label>				     
-		<br/>				 
-		<div class="tab1"></div>
-		<div class="tab2">					
-		<form name="frmMain" method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
-		<input type="hidden" name="hdnCmd" value="">
+		<form name="frmMain" method="post" action="<?=$_SERVER["PHP_SELF"];?>">
+        <input type="hidden" name="hdnCmd" value="">
 		<table >                						
 		<tr>
-			<th> <div align="center" size="25">Record ID</div></th>
+			<th> <div align="center" >Record ID</div></th>
 			<th> <div align="center">Patient ID </div></th>
-			<th width=25 > <div align="center">Doctor ID </div></th>
+			<th> <div align="center">Doctor ID </div></th>
 			<th> <div align="center">Radiologist ID </div></th>
 			<th> <div align="center">Test Type </div></th>
 			<th> <div align="center">Prescribing Date </div></th>
@@ -165,8 +225,8 @@ if (!sessionCheck()) {
 					<td><div align="center"><?= $row["DIAGNOSIS"]; ?></div></td>
 					<td><div align="center" ><?= $row["DESCRIPTION"]; ?></div></td>							    
 					<td align="center"><a href="<?= $_SERVER["PHP_SELF"]; ?>?Action=Edit&keyID=<?= $row["RECORD_ID"]; ?>"><img src="edit-16x16.png"></a></td>
-					<td align="center"><a href="uploadingModule3.php?recordID=<?= $row["RECORD_ID"]; ?>"><img src="edit-16x16.png"></a></td>
-					<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?= $_SERVER["PHP_SELF"]; ?>?Action=Del&keyID=<?= $row["RECORD_ID"]; ?>';}"><img src="delete-16x16.png"></a></td>								
+					<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?= $_SERVER["PHP_SELF"]; ?>?Action=Del&keyID=<?= $row["RECORD_ID"]; ?>';}"><img src="delete-16x16.png"></a></td>
+					<td align="center"><a href="uploadingModule.php?recordID=<?= $row["RECORD_ID"]; ?>"><img src="jpeg-16x16.png"></a></td>								
 				</tr>
 			  
 				<?php
@@ -193,9 +253,7 @@ if (!sessionCheck()) {
 		</form>
 		<?php
 	}
-?>
-	</div>
-	<?php
+
 } //end of sessionCheck if statement
 ?>					
 </body>

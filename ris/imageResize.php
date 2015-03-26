@@ -1,49 +1,38 @@
+<!-- 
+	TODO - renaming for clarity/derived
+-->
+
+<!--
+	Resize image to a maximum of the provided size
+	Parameters:
+		$max_dimension, maximum allowable size for largest side of image
+		$imgfile, image (jpeg) to be resized
+
+	Author: Michael Williams
+	Code for resizing images derived from:
+    http://docs.oracle.com/cd/B28359_01/appdev.111/b28845/ch7.htm
+			
+-->
+
 <?php 
-/**
- * Image resize
- * @param int $width
- * @param int $height
- */
-function resize($width, $height){
-  /* Get original image x y*/
-  list($w, $h) = getimagesize($_FILES['image']['tmp_name']);
-  /* calculate new image size with ratio */
-  $ratio = max($width/$w, $height/$h);
-  $h = ceil($height / $ratio);
-  $x = ($w - $width / $ratio) / 2;
-  $w = ceil($width / $ratio);
-  /* new file name */
-  $path = $width.'x'.$height.'_'.$_FILES['image']['name'];
-  //$path = 'uploads/'.$width.'x'.$height.'_'.$_FILES['image']['name'];
-  /* read binary data from image file */
-  $imgString = file_get_contents($_FILES['image']['tmp_name']);
-  /* create image from string */
-  $image = imagecreatefromstring($imgString);
-  $tmp = imagecreatetruecolor($width, $height);
-  imagecopyresampled($tmp, $image,
-    0, 0,
-    $x, 0,
-    $width, $height,
-    $w, $h);
-  /* Save image */
-  
-  switch ($_FILES['image']['type']) {
-    case 'image/jpeg':
-      imagejpeg($tmp, $path, 100);
-      break;
-    case 'image/png':
-      imagepng($tmp, $path, 0);
-      break;
-    case 'image/gif':
-      imagegif($tmp, $path);
-      break;
-    default:
-      exit;
-      break;
-  }
-  
-  return $tmp;
-  /* cleanup memory */
-  imagedestroy($image);
-  imagedestroy($tmp);
-}?>
+	function resize($max_dimension, $imgfile){
+		  $src_img = imagecreatefromjpeg($imgfile);
+		  list($w, $h) = getimagesize($imgfile);
+		  if ($w > $max_dimension || $h > $max_dimension)
+		  {
+		  	$scale =  $max_dimension / (($h > $w) ? $h : $w);
+		  	$nw = $w * $scale;
+		  	$nh = $h * $scale;
+		  
+		  	$dest_img = imagecreatetruecolor($nw, $nh);
+		  	imagecopyresampled($dest_img, $src_img, 0, 0, 0, 0, $nw, $nh, $w, $h);
+		  
+		  	imagejpeg($dest_img, $imgfile);  // overwrite with new resized image
+		  
+		  	imagedestroy($src_img);
+		  	imagedestroy($dest_img);
+		  }
+		  return $imgfile;
+		  
+	}
+?>
