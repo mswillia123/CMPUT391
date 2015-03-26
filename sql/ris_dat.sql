@@ -72,13 +72,13 @@ INSERT INTO family_doctor VALUES (5, 8);
  *  prescribing_date, test_date, diagnosis, description)
  */
 INSERT INTO radiology_record VALUES
-(1, 4, 2, 3, 'X-Ray', TO_DATE('20150307'), TO_DATE('20150308'), 'Broken arm', 'Scan of right arm.');
+(1, 4, 2, 3, 'X-Ray', TO_DATE('20150307', 'YYYYMMDD'), TO_DATE('20150308', 'YYYYMMDD'), 'Broken arm', 'Scan of right arm.');
 INSERT INTO radiology_record VALUES
-(2, 7, 5, 6, 'X-Ray', TO_DATE('20151101'), TO_DATE('20151210'), 'Broken arm', 'Scan of right arm.');
+(2, 7, 5, 6, 'X-Ray', TO_DATE('20151101', 'YYYYMMDD'), TO_DATE('20151210', 'YYYYMMDD'), 'Broken arm', 'Scan of right arm.');
 INSERT INTO radiology_record VALUES
-(3, 8, 5, 6, 'X-Ray', TO_DATE('20160102'), TO_DATE('20160110'), 'Broken arm', 'Scan of right arm.');
+(3, 8, 5, 6, 'X-Ray', TO_DATE('20160102', 'YYYYMMDD'), TO_DATE('20160110', 'YYYYMMDD'), 'Broken arm', 'Scan of right arm.');
 INSERT INTO radiology_record VALUES
-(4, 4, 2, 3, 'X-Ray', TO_DATE('20150307'), TO_DATE('20160202'), 'Broken arm', 'Scan of right arm.');
+(4, 4, 2, 3, 'X-Ray', TO_DATE('20150307', 'YYYYMMDD'), TO_DATE('20160202', 'YYYYMMDD'), 'Broken arm', 'Scan of right arm.');
 
 /*
  *	Insert data into radiology_search table

@@ -27,6 +27,7 @@
                     if (($row = oci_fetch_array($stid, OCI_NUM)) != false) {
                         $PersonID = $row[0];
                         oci_free_statement($stid);
+                        $patient_name = $_POST['first_name']." ".$_POST['last_name'];
                         // Updating user's personal information
                         $sql = 'UPDATE persons 
                                 SET first_name = \''.$_POST['first_name'].'\', 
@@ -46,17 +47,33 @@
                             $stid = sqlQuery($conn, $sql);
 
                             if ($stid) {
+                                // Update patient_name in radiology_search
                                 oci_free_statement($stid);
-                                echo "Account Information Updated!<br/>";
-                                // Back link
-                                if ($_SESSION['userType'] == 'r') {
-                                    echo '<a href="radiologistMenu.php">Back</a>';
-                                }
-                                else if ($_SESSION['userType'] == 'a') {
-                                    echo '<a href="adminMenu.php">Back</a>';
-                                }
-                                else {
-                                    echo '<a href="searchModule.php">Back</a>';
+                                $sql = "SELECT record_id
+                                        FROM radiology_search
+                                        WHERE patient_id = '".$PersonID."'";
+                                $stid = sqlQuery($conn, $sql);
+                                
+                                if ($stid) {
+                                    while ($row = oci_fetch_array($stid, OCI_NUM)) {
+                                        $sql2 = 'UPDATE radiology_search
+                                                 SET patient_name = \''.$patient_name.'\'
+                                                 WHERE record_id = '.$row[0];
+                                        $stid2 = sqlQuery($conn, $sql2);
+                                        oci_free_statement($stid2);
+                                    }
+                                    oci_free_statement($stid);
+                                    echo "Account Information Updated!<br/>";
+                                    // Back link
+                                    if ($_SESSION['userType'] == 'r') {
+                                        echo '<a href="radiologistMenu.php">Back</a>';
+                                    }
+                                    else if ($_SESSION['userType'] == 'a') {
+                                        echo '<a href="adminMenu.php">Back</a>';
+                                    }
+                                    else {
+                                        echo '<a href="searchModule.php">Back</a>';
+                                    }
                                 }
                             }
                         }
