@@ -15,8 +15,11 @@
 	$imageID = $_GET['imageID'];
 	$recordID = $_GET['recordID'];
 	$imageType = $_GET['imageType'];
+	//echo $recordID;
+	//echo $imageID;
 	
 	$query = "SELECT ".$imageType." FROM PACS_IMAGES WHERE RECORD_ID = :recordID AND IMAGE_ID = :imageID";
+	//echo $query;
 	$stmt = oci_parse ($conn, $query);
 	//oci_bind_by_name($stmt, ':imageType', $imageType);
 	oci_bind_by_name($stmt, ':recordID', $recordID);

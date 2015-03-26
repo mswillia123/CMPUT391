@@ -37,8 +37,9 @@ error check for unique key error
 		$lob = oci_new_descriptor($conn, OCI_D_LOB);
 		//$lob2 = oci_new_descriptor($conn, OCI_D_LOB);
 		//$query = "SELECT ".$imageType." FROM PACS_I
-		$stmt = oci_parse($conn, "insert into pacs_images (record_id, image_id, ".$imageType.") "
-				."values(:recordID, :imageID, empty_blob()) returning ".$imageType." into :blobdata");
+		$query = "insert into pacs_images (record_id, image_id, ".$imageType.") "
+				."values(:recordID, :imageID, empty_blob()) returning ".$imageType." into :blobdata";
+		$stmt = oci_parse($conn, $query);
 		oci_bind_by_name($stmt, ':recordID', $recordID);
 		oci_bind_by_name($stmt, ':imageID', $imageID);
 		oci_bind_by_name($stmt, ':blobdata', $lob, -1, OCI_B_BLOB);
@@ -100,6 +101,7 @@ error check for unique key error
 		  
 		  // Delete (overwrite) any existing BLOB with the same record and image ID's		  
 		  $query = "delete from pacs_images where record_id = :recordID and image_id = :imageID";
+		  echo $query;
 		  $stmt = oci_parse ($conn, $query);
 		  oci_bind_by_name($stmt, ':recordID', $recordID);
 		  oci_bind_by_name($stmt, ':imageID', $imageID);
@@ -113,7 +115,7 @@ error check for unique key error
 		  //$imgfile2 = resize(200, $imgfile);
 		  uploadImage($imgfile, $recordID, $imageID, 'THUMBNAIL');		  
 
-		  header('Location: uploadingModule.php?recordID='.$recordID.'');
+		  //header('Location: uploadingModule.php?recordID='.$recordID.'');
 	}
 	
 	?>
