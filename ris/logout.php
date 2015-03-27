@@ -10,5 +10,5 @@
     unset($_SESSION['user']);
     unset($_SESSION['userType']);
     session_destroy();
-    header('Location: loginModule.html');
+    header('Location: loginModule.php');
 ?>

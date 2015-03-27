@@ -81,7 +81,7 @@
                             }
                         } else {
                             echo 'There was an error retrieving your data! <br/>';
-                            echo '<a href="loginModule.html">Back to Login</a>';
+                            echo '<a href="loginModule.php">Back to Login</a>';
                         }
                     }
                 } else {
@@ -149,7 +149,7 @@
                         <?php
                     } else {
                         echo 'There was an error retrieving your data! <br/>';
-                        echo '<a href="loginModule.html">Back to Login</a>';
+                        echo '<a href="loginModule.php">Back to Login</a>';
                     }
                 }
                 oci_free_statement($stid);
