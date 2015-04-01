@@ -13,6 +13,7 @@
         session_regenerate_id();
         if(!isset($_SESSION['user'])) {
             echo 'Not logged in! <br/>';
+            header("Location: index.html");
             return false;
         }
         return true;

@@ -24,9 +24,9 @@
 <?php
 include("sessionCheck.php");
 include("PHPconnectionDB.php");
-if (!sessionCheck()) {
-	echo 'Not logged in! <br/>';
-} else {
+if (sessionCheck()) {
+	//echo 'Not logged in! <br/>';
+//} else {
 	error_reporting(E_ALL ^ E_NOTICE);
 	$conn = connect();
 	// Add record button selected: Add a new radiology record from the filled form data
