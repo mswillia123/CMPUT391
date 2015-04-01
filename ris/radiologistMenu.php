@@ -1,6 +1,6 @@
 <html>
     <body>
-    <h2>Administrator Menu</h2>
+    <h2>Radiologist Menu</h2>
     <?php
         include("sessionCheck.php");
         include("userInfoDisplay.php");
@@ -9,6 +9,7 @@
         }
         else {
             userInfoDisplay();
+            echo '<a href="manageRadiologyRecords.php">Radiology Records</a><br/>';
             echo '<a href="searchModule.php">Search</a><br/>';
         }
     ?>

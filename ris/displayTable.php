@@ -5,6 +5,11 @@
  * along with helper functions.
  * 
  * Author: Costa
+ * 
+ * Code to display images adapted from:
+ * http://stackoverflow.com/questions/13214602/how-to-display-an-blob-image-stored-in-mysql-database
+ * Author: jerza
+ * Date: 3/26/15
  */
 
 // If not defined
@@ -90,12 +95,25 @@ function searchTable($stid) {
 
 function displayThumbnails($row) {
     $conn2 = connect();
-    $sql2 = "SELECT image_id FROM pacs_images WHERE record_id =" . $row[0];
+    // 0 image_id, 1 thumbnail, 2 regular_size, 3 full_size
+    $sql2 = "SELECT image_id, thumbnail, regular_size, full_size FROM pacs_images WHERE record_id =" . $row[0];
     $stid2 = sqlQuery($conn2, $sql2);
     if ($stid2) {
         $image_found = false;
         while ($row2 = oci_fetch_array($stid2, OCI_NUM)) {
-            echo "Image Found";
+            // Gets blobs for each size and loads them
+            $thumbnail = $row2[1]->load();
+            $regular = $row2[2]->load();
+            $full = $row2[3]->load();
+            
+            // Displays image in form and sends other sized loaded blobs when clicked
+            echo '<span style="float:left">';
+            echo '<form method="POST" action="imageZoom.php" target="_blank" >';
+            echo '<input type="image" src="data:image/jpeg;base64,'.base64_encode( $thumbnail ).'" name="thumbnail" />';
+            echo '<input type="hidden" name="regular" value="'.base64_encode( $regular ).'" />';
+            echo '<input type="hidden" name="full" value="'.base64_encode( $full ).'" />';
+            echo '</form>';
+            echo '</span>';
             $image_found = true;
         }
         if (!$image_found) {
