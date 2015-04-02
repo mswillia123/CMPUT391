@@ -15,12 +15,12 @@
             	$conn = connect();
             	
             	// Add
-            	if($_POST['hdnCmd'] == "Add")
+            	if($_POST["hdnCmd"] == "Add")
             	{
             		$str = "INSERT INTO FAMILY_DOCTOR ";
             		$str .="(DOCTOR_ID, PATIENT_ID) ";
             		$str .="VALUES ";
-            		$str .="('".$_POST['txtAdddoctor_id']."','".$_POST['txtAddpatient_id']."')";
+            		$str .="('".$_POST["txtAdddoctor_id"]."','".$_POST["txtAddpatient_id"]."')";
 
             		$stid = oci_parse($conn, $str);
             		$res = oci_execute($stid);
@@ -38,14 +38,14 @@
             	}
 				
             	// Update
-            	if($_POST['hdnCmd'] == "Update")
+            	if($_POST["hdnCmd"] == "Update")
             	{
 
             		$str = "UPDATE FAMILY_DOCTOR SET ";
-            		$str .="DOCTOR_ID = '".$_POST['txtEditdoctor_id']."' ";
-            		$str .=",PATIENT_ID = '".$_POST['txtEditpatient_id']."' ";
+            		$str .="DOCTOR_ID = '".$_POST["txtEditdoctor_id"]."' ";
+            		$str .=",PATIENT_ID = '".$_POST["txtEditpatient_id"]."' ";
 
-            		$str .="WHERE DOCTOR_ID = '".$_POST['hdnEditdoctor_id']."' ";
+            		$str .="WHERE DOCTOR_ID = '".$_POST["hdnEditdoctor_id"]."' ";
             		$stid = oci_parse($conn, $str);     
             		$res = oci_execute($stid);
             		if($res)
@@ -61,9 +61,9 @@
             	}
             	
             	// Delete
-            	if($_GET['Action'] == "Del")
+            	if($_GET["Action"] == "Del")
             	{
-            		$str = "DELETE FROM FAMILY_DOCTOR WHERE DOCTOR_ID = '".$_GET['keyID']."' ";
+            		$str = "DELETE FROM FAMILY_DOCTOR WHERE DOCTOR_ID = '".$_GET["keyID"]."' ";
             		$stid = oci_parse($conn, $str);
             		$res = oci_execute($stid);
             		if($res)
@@ -105,7 +105,7 @@
 				    <div class="tab2"></div>
 	    			<div class="tab3">
 					
-                	<form name="frmMain" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
+                	<form name="frmMain" method="post" action="<?=$_SERVER["PHP_SELF"];?>">
                 	<input type="hidden" name="hdnCmd" value="">
                 	<table  >
                 						
@@ -118,21 +118,21 @@
 					while ($row=oci_fetch_array($stid, OCI_BOTH)) 
 					{
 
-						if( $row['DOCTOR_ID'] == $_GET['keyID'] and $_GET['Action'] == "Edit")
+						if( $row["DOCTOR_ID"] == $_GET["keyID"] and $_GET["Action"] == "Edit")
 						{
 						?>
 						<tr>
 							<td><div align="center">
-								<input type="text" name="txtEditdoctor_id"  size="15" value="<?php echo $row['DOCTOR_ID'];?>">
-								<input type="hidden" name="hdnEditdoctor_id" value="<?php echo $row['DOCTOR_ID'];?>">
+								<input type="text" name="txtEditdoctor_id"  size="15" value="<?=$row['DOCTOR_ID'];?>">
+								<input type="hidden" name="hdnEditdoctor_id" value="<?=$row["DOCTOR_ID"];?>">
 							</div></td>
 							<td><div align="center">
-								<input type="text" name="txtEditpatient_id" size="15" value="<?php echo $row['PATIENT_ID'];?>">
+								<input type="text" name="txtEditpatient_id" size="15" value="<?=$row["PATIENT_ID"];?>">
 							</div></td>
 
 							<td colspan="2" align="right"><div align="center">
 								<input name="btnAdd" type="button" id="btnUpdate" value="Update" OnClick="frmMain.hdnCmd.value='Update';frmMain.submit();">
-								<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location='<?php echo $_SERVER['PHP_SELF'];?>';">
+								<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location='<?=$_SERVER["PHP_SELF"];?>';">
 							</div></td>
 						</tr>
 						<?php
@@ -142,11 +142,11 @@
   						?>
 						  
 						    <tr>
-							    <td><div align="center"><?php echo $row['DOCTOR_ID'];?></div></td>
-							    <td><div align="center"><?php echo $row['PATIENT_ID'];?></div></td>
+							    <td><div align="center"><?=$row["DOCTOR_ID"];?></div></td>
+							    <td><div align="center"><?=$row["PATIENT_ID"];?></div></td>
 
-							    <td align="center"><a href="<?php echo $_SERVER['PHP_SELF'];?>?Action=Edit&keyID=<?php echo $row['DOCTOR_ID'];?>"><img src="edit-16x16.png"></a></td>
-								<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?php echo $_SERVER['PHP_SELF'];?>?Action=Del&keyID=<?php echo $row['DOCTOR_ID'];?>';}"><img src="delete-16x16.png"></a></td>
+							    <td align="center"><a href="<?=$_SERVER["PHP_SELF"];?>?Action=Edit&keyID=<?=$row["DOCTOR_ID"];?>"><img src="edit-16x16.png"></a></td>
+								<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?=$_SERVER["PHP_SELF"];?>?Action=Del&keyID=<?=$row["DOCTOR_ID"];?>';}"><img src="delete-16x16.png"></a></td>
 					  		</tr>
 						  
 					   	<?php

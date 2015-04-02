@@ -168,16 +168,11 @@ error check for unique key error
 		
 		  //$src_img = resize(50, $src_img);
 		  //$scaled = addslashes($scaled);
-		  
-		//Upload full sized image  
 		uploadImage($_FILES['image']['tmp_name'], $recordID, $imageID, 'FULL_SIZE');
 		echo '<img src="data:image/jpg;base64,' .  base64_encode($_FILES['image']['tmp_name'])  . '" />';
 		
-		//Resize to regular size image and store to DB
 		$scaled = resize(200, $_FILES['image']['tmp_name']);
 		uploadImage($scaled, $recordID, $imageID, 'REGULAR_SIZE');
-		
-		//Resize to thumbnail image and store to DB
 		echo '<img src="data:image/jpg;base64,' .  base64_encode($scaled)  . '" />';
 		
 		  $scaled = resize(50, $_FILES['image']['tmp_name']);		  

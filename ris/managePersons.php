@@ -105,7 +105,7 @@ if (!sessionCheck()) {
 		<div class="tab1"></div>
 		<div class="tab2">
 		
-		<form name="frmMain" method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
+		<form name="frmMain" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 		<input type="hidden" name="hdnCmd" value="">
 		<table  >
 							
@@ -127,29 +127,29 @@ if (!sessionCheck()) {
 ?>
 				<tr>
 					<td><div align="center">
-						<input type="text" name="txtEditperson_id"  size="1" value="<?= $row['PERSON_ID']; ?>">
-						<input type="hidden" name="hdnEditperson_id" value="<?= $row["PERSON_ID"]; ?>">
+						<input type="text" name="txtEditperson_id"  size="1" value="<?php echo $row['PERSON_ID']; ?>">
+						<input type="hidden" name="hdnEditperson_id" value="<?php echo $row['PERSON_ID']; ?>">
 					</div></td>
 					<td><div align="center">
-						<input type="text" name="txtEditfirst_name" size="15" value="<?= $row["FIRST_NAME"]; ?>">
+						<input type="text" name="txtEditfirst_name" size="15" value="<?php echo $row['FIRST_NAME']; ?>">
 					</div></td>
 					<td><div align="center">
-						<input type="text" name="txtEditlast_name" size="15" value="<?= $row["LAST_NAME"]; ?>">
+						<input type="text" name="txtEditlast_name" size="15" value="<?php echo $row['LAST_NAME']; ?>">
 					</div></td>
 					<td><div align="center">
-						<input type="text" name="txtEditaddress" size="15" value="<?= $row["ADDRESS"]; ?>">
+						<input type="text" name="txtEditaddress" size="15" value="<?php echo $row['ADDRESS']; ?>">
 					</div></td>
 					<td><div align="center">
-						<input type="text" name="txtEditemail" size="15" value="<?= $row["EMAIL"]; ?>">
+						<input type="text" name="txtEditemail" size="15" value="<?php echo $row['EMAIL']; ?>">
 					</div></td>
 					<td><div align="center">
-						<input type="text" name="txtEditphone" size="15" value="<?= $row["PHONE"]; ?>">
+						<input type="text" name="txtEditphone" size="15" value="<?php echo $row['PHONE']; ?>">
 					</div></td>	
 
 
 					<td colspan="2" align="right"><div align="center">
 						<input name="btnAdd" type="button" id="btnUpdate" value="Update" OnClick="frmMain.hdnCmd.value='Update';frmMain.submit();">
-						<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location='<?= $_SERVER["PHP_SELF"]; ?>';">
+						<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location='<?php echo $_SERVER['PHP_SELF']; ?>';">
 					</div></td>
 				</tr>
 				<?php
@@ -157,14 +157,14 @@ if (!sessionCheck()) {
 				// Render and display all record information for all non-edit mode rows 
 ?>					  
 				<tr>
-					<td><div align="center"><?= $row["PERSON_ID"]; ?></div></td>
-					<td><div align="center"><?= $row["FIRST_NAME"]; ?></div></td>
-					<td><div align="center"><?= $row["LAST_NAME"]; ?></div></td>
-					<td><div align="center"><?= $row["ADDRESS"]; ?></div></td>
-					<td><div align="center"><?= $row["EMAIL"]; ?></div></td>
-					<td><div align="center"><?= $row["PHONE"]; ?></div></td>
-					<td align="center"><a href="<?= $_SERVER["PHP_SELF"]; ?>?Action=Edit&keyID=<?= $row["PERSON_ID"]; ?>"><img src="edit-16x16.png"></a></td>
-					<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?= $_SERVER["PHP_SELF"]; ?>?Action=Del&keyID=<?= $row["PERSON_ID"]; ?>';}"><img src="delete-16x16.png"></a></td>
+					<td><div align="center"><?php echo $row["PERSON_ID"]; ?></div></td>
+					<td><div align="center"><?php echo $row["FIRST_NAME"]; ?></div></td>
+					<td><div align="center"><?php echo $row["LAST_NAME"]; ?></div></td>
+					<td><div align="center"><?php echo $row["ADDRESS"]; ?></div></td>
+					<td><div align="center"><?php echo $row["EMAIL"]; ?></div></td>
+					<td><div align="center"><?php echo $row["PHONE"]; ?></div></td>
+					<td align="center"><a href="<?php echo $_SERVER["PHP_SELF"]; ?>?Action=Edit&keyID=<?php echo $row["PERSON_ID"]; ?>"><img src="edit-16x16.png"></a></td>
+					<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?php echo $_SERVER["PHP_SELF"]; ?>?Action=Del&keyID=<?php echo $row["PERSON_ID"]; ?>';}"><img src="delete-16x16.png"></a></td>
 				</tr>			  
 				<?php
 			}

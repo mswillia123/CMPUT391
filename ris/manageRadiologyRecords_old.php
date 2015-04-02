@@ -19,7 +19,7 @@
 
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<head><link href="base.css" rel="stylesheet" type="text/css"></head>
+<head></head>
 <body>
 <?php
 include("sessionCheck.php");
@@ -71,7 +71,7 @@ if (sessionCheck()) {
 		$str .="INSERT INTO radiology_search VALUES";
 		$str .="(". $_POST['txtAddrecord_id'] .", ". $_POST['txtAddpatient_id'] .", patient_name, '" . $_POST['txtAdddiagnosis'] . "', '" . $_POST['txtAdddescription'] . "'); END;";
 		
-		//echo $str;
+		echo $str;
 		$stid = oci_parse($conn, $str);
 		$res  = oci_execute($stid);
 		if ($res) {
@@ -85,7 +85,6 @@ if (sessionCheck()) {
 	}
 	// Update button selected: Update existing DB record from edited changes to row
 	if ($_POST['hdnCmd'] == "Update") {
-	?> blah <?php
 		$str = "update radiology_record set ";
 		$str .= "record_id = '" . $_POST['txtEditrecord_id'] . "' ";
 		$str .= ",patient_id = '" . $_POST['txtEditpatient_id'] . "' ";
@@ -120,7 +119,7 @@ if (sessionCheck()) {
 		$str .= ",description = '" . $_POST['txtEditdescription'] . "'";
 		$str .= "where record_id = '". $_POST['txtEditrecord_id'] ."'; END; ";
 		
-		//echo $str;
+		echo $str;
 		$stid = oci_parse($conn, $str);
 		$res  = oci_execute($stid);
 		if ($res) {
@@ -167,46 +166,46 @@ if (sessionCheck()) {
 	
 ?>             
 		<h2>Radiology Record Module</h2>					
-		<form name="frmMain" method="post" action="<?php echo $_SERVER['PHP_SELF']?>">
+		<form name="frmMain" method="post" action="<?=$_SERVER['PHP_SELF']?>">
         <input type="hidden" name="hdnCmd" value=".">
 		<table >                						
 		<tr>
-			<th> <div align="center" >Record ID</div></th>
-			<th> <div align="center">Patient ID </div></th>
-			<th> <div align="center">Doctor ID </div></th>
-			<th> <div align="center">Radiologist ID </div></th>
-			<th> <div align="center">Test Type </div></th>
-			<th> <div align="center">Prescribing Date </div></th>
-			<th> <div align="center">Test Date </div></th>
-			<th> <div align="center">Diagnosis </div></th>
-			<th> <div align="center">Description </div></th>
+			<th>  Record ID</th>
+			<th> Patient ID </th>
+			<th> Doctor ID </th>
+			<th> Radiologist ID </th>
+			<th> Test Type </th>
+			<th> Prescribing Date </th>
+			<th> Test Date </th>
+			<th> Diagnosis </th>
+			<th> Description </th>
 		</tr>
 		<?php
 		// Iterate through all selected rows
 		while ($row = oci_fetch_array($stid, OCI_BOTH))
 		{
-			
+			?>  <?php echo $row[0];
 			// If edit button selected, enter editing mode with editable fields on the selected row
 			// Update button submits form to page (self) with POST using hidden button named Update
 			if ($row['RECORD_ID'] == $_GET['keyID'] and $_GET['Action'] == "Edit") {
 ?>
-				<tr>Test
-					<td><div align="center"><?php echo $row['RECORD_ID']; ?>
-						<input type="hidden" name="txtEditrecord_id"  size="1" value="<?php echo $row['RECORD_ID']; ?>">
-						<input type="hidden" name="hdnEditrecord_id" value="<?php echo $row['RECORD_ID']; ?>">
-					</div></td>
-					<td><div align="center"><input type="text" name="txtEditpatient_id" size="1" value="<?php echo $row['PATIENT_ID']; ?>"></div></td>
-					<td><div align="center"><input type="text" name="txtEditdoctor_id" size="1" value="<?php echo $row['DOCTOR_ID']; ?>"></div></td>
-					<td><div align="center"><input type="text" name="txtEditradiologist_id" size="1" value="<?php echo $row['RADIOLOGIST_ID']; ?>"></div></td>
-					<td><div align="center"><input type="text" name="txtEdittest_type" size="15" value="<?php echo $row['TEST_TYPE']; ?>"></div></td>
-					<td><div align="center"><input type="date" name="txtEditprescribing_date" size="1" value="<?php echo $row['TEST_DATE']; ?>"></div></td>
-					<td><div align="center"><input type="date" name="txtEdittest_date" size="1" value="<?php echo $row['PRESCRIBING_DATE']; ?>"></div></td>							
-					<td><div align="center"><input type="text" name="txtEditdiagnosis" size="15" value="<?php echo $row['DIAGNOSIS']; ?>"></div></td>	
-					<td><div align="center"><input type="text" name="txtEditdescription" size="15" value="<?php echo $row['DESCRIPTION']; ?>"></div></td>
-					<td colspan="2" align="right"><div align="center">
+				<tr>
+					<td><?= $row['RECORD_ID']; ?>	
+						<input type="hidden" name="txtEditrecord_id"  size="1" value="<?= $row['RECORD_ID']; ?>">
+						<input type="hidden" name="hdnEditrecord_id" value="<?= $row['RECORD_ID']; ?>">
+					</td>
+					<td><input type="text" name="txtEditpatient_id" size="1" value="<?= $row['PATIENT_ID']; ?>"></td>
+					<td><input type="text" name="txtEditdoctor_id" size="1" value="<?= $row['DOCTOR_ID']; ?>"></td>
+					<td><input type="text" name="txtEditradiologist_id" size="1" value="<?= $row['RADIOLOGIST_ID']; ?>"></td>
+					<td><input type="text" name="txtEdittest_type" size="15" value="<?= $row['TEST_TYPE']; ?>"></td>
+					<td><input type="date" name="txtEditprescribing_date" size="1" value="<?= $row['TEST_DATE']; ?>"></td>
+					<td><input type="date" name="txtEdittest_date" size="1" value="<?= $row['PRESCRIBING_DATE']; ?>"></td>							
+					<td><input type="text" name="txtEditdiagnosis" size="15" value="<?= $row['DIAGNOSIS']; ?>"></td>	
+					<td><input type="text" name="txtEditdescription" size="15" value="<?= $row['DESCRIPTION']; ?>"></td>
+					<td colspan="2" align="right">>
 						<input name="btnAdd" type="button" id="btnUpdate" value="Update" OnClick="frmMain.hdnCmd.value='Update';frmMain.submit();">
-						<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location=<?php echo $_SERVER['PHP_SELF']; ?>;">
-					</div></td>
+						<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location='<?= $_SERVER['PHP_SELF']; ?>';">
+					</td>
 				</tr>
 				<?php
 			} else {
@@ -216,20 +215,20 @@ if (sessionCheck()) {
 				// Image button redirects to image upload page and passes record ID 
 				// Delete button reloads page with delete GET action and record ID
 ?>			  
-				<tr>
+				<tr>TEST
 					
-					<td><div align="center"><?php echo $row['RECORD_ID']; ?></div></td>
-					<td><div align="center"><?php echo $row['PATIENT_ID']; ?></div></td>
-					<td><div align="center"><?php echo $row['DOCTOR_ID']; ?></div></td>
-					<td><div align="center"><?php echo $row['RADIOLOGIST_ID']; ?></div></td>
-					<td><div align="center"><?php echo $row['TEST_TYPE']; ?></div></td>
-					<td><div align="center"><?php echo $row['PRESCRIBING_DATE']; ?></div></td>
-					<td><div align="center"><?php echo $row['TEST_DATE']; ?></div></td>
-					<td><div align="center"><?php echo $row['DIAGNOSIS']; ?></div></td>
-					<td><div align="center" ><?php echo $row['DESCRIPTION']; ?></div></td>							    
-					<td align="center"><a href="<?php echo $_SERVER['PHP_SELF']; ?>?Action=Edit&keyID=<?php echo $row['RECORD_ID']; ?>"><img src="edit-16x16.png"></a></td>
-					<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?php echo $_SERVER['PHP_SELF']; ?>?Action=Del&keyID=<?php echo $row['RECORD_ID']; ?>';}"><img src="delete-16x16.png"></a></td>
-					<td align="center"><a href="imageUploadModule.php?recordID=<?php echo $row['RECORD_ID']; ?>"><img src="jpeg-16x16.png"></a></td>								
+					<td><?php echo $row[0]; ?></td>
+					<td><?php echo $row['PATIENT_ID']; ?></td>
+					<td><?= $row['DOCTOR_ID']; ?></td>
+					<td><?= $row['RADIOLOGIST_ID']; ?></td>
+					<td><?= $row['TEST_TYPE']; ?></td>
+					<td><?= $row['PRESCRIBING_DATE']; ?></td>
+					<td><?= $row['TEST_DATE']; ?></td>
+					<td><?= $row['DIAGNOSIS']; ?></td>
+					<td><?= $row['DESCRIPTION']; ?></td>							    
+					<td align="center"><a href="<?= $_SERVER['PHP_SELF']; ?>?Action=Edit&keyID=<?=$row['RECORD_ID']; ?>"><img src="edit-16x16.png"></a></td>
+					<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?= $_SERVER['PHP_SELF']; ?>?Action=Del&keyID=<?= $row['RECORD_ID']; ?>';}"><img src="delete-16x16.png"></a></td>
+					<td align="center"><a href="imageUploadModule.php?recordID=<?= $row['RECORD_ID']; ?>"><img src="jpeg-16x16.png"></a></td>								
 				</tr>
 			  
 				<?php
@@ -239,18 +238,18 @@ if (sessionCheck()) {
 				// Add button submits form to page (self) with POST using hidden button named Add
 ?>
 				<tr>					
-				    <td><div align="center"><input type="text" name="txtAddrecord_id" size="1" ></div></td>
-				    <td><div align="center"><input type="text" name="txtAddpatient_id" size="1"></div></td>
-				    <td><div align="center"><input type="text" name="txtAdddoctor_id"  size="1"></div></td>
-					<td><div align="center"><input type="text" name="txtAddradiologist_id"  size="2"></div></td>
-				    <td><div align="center"><input type="text" name="txtAddtest_type"  size="15"></div></td>				  				    
-					<td><div align="center"><input type="date" name="txtAddprescribing_date" size="10" ></div></td>
-					<td><div align="center"><input type="date" name="txtAddtest_date" size="10" ></div></td>							
-					<td><div align="center"><input type="text" name="txtAdddiagnosis" size="15" ></div></td>	
-					<td><div align="center"><input type="text" name="txtAdddescription" size="15" ></div></td>				    
-				    <td colspan="2" align="right"><div align="center">
+				    <td>><input type="text" name="txtAddrecord_id" size="1" ></td>
+				    <td>><input type="text" name="txtAddpatient_id" size="1"></td>
+				    <td>><input type="text" name="txtAdddoctor_id"  size="1"></td>
+					<td>><input type="text" name="txtAddradiologist_id"  size="2"></td>
+				    <td>><input type="text" name="txtAddtest_type"  size="15"></td>				  				    
+					<td>><input type="date" name="txtAddprescribing_date" size="10" ></td>
+					<td>><input type="date" name="txtAddtest_date" size="10" ></td>							
+					<td>><input type="text" name="txtAdddiagnosis" size="15" ></td>	
+					<td>><input type="text" name="txtAdddescription" size="15" ></td>				    
+				    <td colspan="2" align="right">>
 				      <input name="btnAdd" type="image" src="plus-16x16.png" id="btnAdd" value="Add" OnClick="frmMain.hdnCmd.value='Add';frmMain.submit();">
-				    </div></td>
+				    </td>
 			    </tr>
 		</table>
 		</form>

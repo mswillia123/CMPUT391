@@ -105,7 +105,7 @@
 				 
 				    <div class="tab1">
 					
-                	<form name="frmMain" method="post" action="<?php echo $_SERVER["PHP_SELF"];?>">
+                	<form name="frmMain" method="post" action="<?=$_SERVER["PHP_SELF"];?>">
                 	<input type="hidden" name="hdnCmd" value="">
                 	<table  >
                 						
@@ -125,25 +125,25 @@
 						?>
 						<tr>
 							<td><div align="center">
-								<input type="text" name="txtEdituser_name"  size="15" value="<?php echo $row['USER_NAME'];?>">
-								<input type="hidden" name="hdnEdituser_name" value="<?php echo $row["USER_NAME"];?>">
+								<input type="text" name="txtEdituser_name"  size="15" value="<?=$row['USER_NAME'];?>">
+								<input type="hidden" name="hdnEdituser_name" value="<?=$row["USER_NAME"];?>">
 							</div></td>
 							<td><div align="center">
-								<input type="text" name="txtEditpassword" size="15" value="<?php echo $row["PASSWORD"];?>">
+								<input type="text" name="txtEditpassword" size="15" value="<?=$row["PASSWORD"];?>">
 							</div></td>
 							<td><div align="center">
-								<input type="text" name="txtEditclass" size="1" value="<?php echo $row["CLASS"];?>">
+								<input type="text" name="txtEditclass" size="1" value="<?=$row["CLASS"];?>">
 							</div></td>
 							<td><div align="center">
-								<input type="text" name="txtEditperson_id" size="1" value="<?php echo $row["PERSON_ID"];?>">
+								<input type="text" name="txtEditperson_id" size="1" value="<?=$row["PERSON_ID"];?>">
 							</div></td>
 							<td><div align="center">
-								<?php echo $row["DATE_REGISTERED"];?>
-								<!-- <input type="text" name="txtEditdate_registered" size="20" value="<?php echo $row["DATE_REGISTERED"];?>"> -->
+								<?=$row["DATE_REGISTERED"];?>
+								<!-- <input type="text" name="txtEditdate_registered" size="20" value="<?=$row["DATE_REGISTERED"];?>"> -->
 							</div></td>
 							<td colspan="2" align="right"><div align="center">
 								<input name="btnAdd" type="button" id="btnUpdate" value="Update" OnClick="frmMain.hdnCmd.value='Update';frmMain.submit();">
-								<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location='<?php echo $_SERVER["PHP_SELF"];?>';">
+								<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location='<?=$_SERVER["PHP_SELF"];?>';">
 							</div></td>
 						</tr>
 						<?php
@@ -153,13 +153,13 @@
   						?>
 						  
 						    <tr>
-							    <td><div align="center"><?php echo $row["USER_NAME"];?></div></td>
-							    <td><div align="center"><?php echo $row["PASSWORD"];?></div></td>
-							    <td><div align="center"><?php echo $row["CLASS"];?></div></td>
-							    <td><div align="center"><?php echo $row["PERSON_ID"];?></div></td>
-							    <td><div align="center"><?php echo $row["DATE_REGISTERED"];?></div></td>
-							    <td align="center"><a href="<?php echo $_SERVER["PHP_SELF"];?>?Action=Edit&keyID=<?php echo $row["USER_NAME"];?>"><img src="edit-16x16.png"></a></td>
-								<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?php echo $_SERVER["PHP_SELF"];?>?Action=Del&keyID=<?php echo $row["USER_NAME"];?>';}"><img src="delete-16x16.png"></a></td>
+							    <td><div align="center"><?=$row["USER_NAME"];?></div></td>
+							    <td><div align="center"><?=$row["PASSWORD"];?></div></td>
+							    <td><div align="center"><?=$row["CLASS"];?></div></td>
+							    <td><div align="center"><?=$row["PERSON_ID"];?></div></td>
+							    <td><div align="center"><?=$row["DATE_REGISTERED"];?></div></td>
+							    <td align="center"><a href="<?=$_SERVER["PHP_SELF"];?>?Action=Edit&keyID=<?=$row["USER_NAME"];?>"><img src="edit-16x16.png"></a></td>
+								<td align="center"><a href="JavaScript:if(confirm('Confirm Delete?')==true){window.location='<?=$_SERVER["PHP_SELF"];?>?Action=Del&keyID=<?=$row["USER_NAME"];?>';}"><img src="delete-16x16.png"></a></td>
 					  		</tr>
 						  
 					   	<?php
@@ -172,7 +172,7 @@
 				    <td><div align="center"><input type="text" name="txtAddpassword" size="15"></div></td>
 				    <td><div align="center"><input type="text" name="txtAddclass"  size="1"></div></td>
 				    <td><div align="center"><div align="center"><input type="text" name="txtAddperson_id" size="1" ></div></td>
-				    <td><div align="center"><?php echo date("d-M-y")?></div></td>
+				    <td><div align="center"><?=date("d-M-y")?></div></td>
 				    <td colspan="2" align="right"><div align="center">
 				      <input name="btnAdd" type="image" src="plus-16x16.png" id="btnAdd" value="Add" OnClick="frmMain.hdnCmd.value='Add';frmMain.submit();">
 				    </div></td>
