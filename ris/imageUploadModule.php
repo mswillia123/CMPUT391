@@ -75,6 +75,7 @@ error check for unique key error
 		/* Merge does not work with 'returning'
 		 * this was the last query that I tried
 		 */
+		/*
 		$query = "merge into pacs_images "
 		."using dual on (record_id = :recordID and image_id = :imageID) "
 		."when matched then "
@@ -85,19 +86,17 @@ error check for unique key error
 		."insert (record_id, image_id, ".$imageType.") "
 		."values (:recordID, :imageID, empty_blob()) "
 		."returning ".$imageType." into :blobdata;";
-
+		*/
 		//."end;";
-		
-		
-		
+		$query = "update pacs_images set ".$imageType." = empty_blob() "
+		."where record_id = :recordID and image_id = :imageID;";	
 		echo $query;
-		$stmt = oci_parse($conn, $query);
-		oci_bind_by_name($stmt, ':recordID', $recordID);
-		oci_bind_by_name($stmt, ':imageID', $imageID);
-		oci_bind_by_name($stmt, ':blobdata', $lob, -1, OCI_B_BLOB);
+		$query = oci_parse($conn, $query);
+		oci_bind_by_name($query, ':recordID', $recordID);
+		oci_bind_by_name($query, ':imageID', $imageID);
+		oci_bind_by_name($query, ':blobdata', $lob, -1, OCI_B_BLOB);
 		//oci_bind_by_name($stmt, ':blobdata2', $lob2, -1, OCI_B_BLOB);
-		oci_execute($stmt, OCI_DEFAULT);  // Note OCI_DEFAULT
-
+		oci_execute($query, OCI_DEFAULT);  // Note OCI_DEFAULT
 		
 		if ($lob->save($imgfile)) {
 			oci_commit($conn);
