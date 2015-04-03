@@ -7,7 +7,7 @@
             include("sessionCheck.php");
             include("PHPconnectionDB.php");
             if (!sessionCheck()) {
-                echo 'Not logged in! <br/>';
+				header('Location: loginModule.php');
             }
             else {
             	error_reporting(E_ALL ^ E_NOTICE);

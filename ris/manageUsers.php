@@ -7,11 +7,10 @@
             include("sessionCheck.php");
             include("PHPconnectionDB.php");
             if (!sessionCheck()) {
-                echo 'Not logged in! <br/>';
+				header('Location: loginModule.php');
             }
             else {
-            	error_reporting(E_ALL ^ E_NOTICE);
-            	
+            	error_reporting(E_ALL ^ E_NOTICE);            	
             	$conn = connect();
             	
             	// Add
@@ -40,7 +39,6 @@
             	// Update
             	if($_POST["hdnCmd"] == "Update")
             	{
-
             		$str = "UPDATE USERS SET ";
             		$str .="USER_NAME = '".$_POST["txtEdituser_name"]."' ";
             		$str .=",PASSWORD = '".$_POST["txtEditpassword"]."' ";
@@ -90,6 +88,7 @@
                 ?>    
                
 					<h2>User Management Module</h2>
+					<a href='adminMenu.php'>Administrator menu</a><br><br>
 					
 					<div class="tabGroup">
 				    <input type="radio" name="tabGroup1" id="rad1" class="tab1" checked="checked"/>

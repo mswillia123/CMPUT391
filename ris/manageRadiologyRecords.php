@@ -24,9 +24,11 @@
 <?php
 include("sessionCheck.php");
 include("PHPconnectionDB.php");
-if (sessionCheck()) {
-	//echo 'Not logged in! <br/>';
-//} else {
+
+if (!sessionCheck()) {
+	header('Location: loginModule.php');
+} else {
+
 	error_reporting(E_ALL ^ E_NOTICE);
 	$conn = connect();
 	// Add record button selected: Add a new radiology record from the filled form data
@@ -85,7 +87,6 @@ if (sessionCheck()) {
 	}
 	// Update button selected: Update existing DB record from edited changes to row
 	if ($_POST['hdnCmd'] == "Update") {
-	?> blah <?php
 		$str = "update radiology_record set ";
 		$str .= "record_id = '" . $_POST['txtEditrecord_id'] . "' ";
 		$str .= ",patient_id = '" . $_POST['txtEditpatient_id'] . "' ";
@@ -155,7 +156,7 @@ if (sessionCheck()) {
 		}
 
 	}
-	
+
 	// Select all records, render and display all records and form elements for editing, adding, deleting records
 	$sql  = "select * from radiology_record order by record_id";
 	$stid = oci_parse($conn, $sql);
@@ -166,7 +167,8 @@ if (sessionCheck()) {
 	} else {
 	
 ?>             
-		<h2>Radiology Record Module</h2>					
+		<h2>Radiology Record Module</h2>	
+		<a href="radiologistMenu.php"> Radiologist menu</a><p>				
 		<form name="frmMain" method="post" action="<?php echo $_SERVER['PHP_SELF']?>">
         <input type="hidden" name="hdnCmd" value=".">
 		<table >                						
@@ -190,7 +192,7 @@ if (sessionCheck()) {
 			// Update button submits form to page (self) with POST using hidden button named Update
 			if ($row['RECORD_ID'] == $_GET['keyID'] and $_GET['Action'] == "Edit") {
 ?>
-				<tr>Test
+				<tr>
 					<td><div align="center"><?php echo $row['RECORD_ID']; ?>
 						<input type="hidden" name="txtEditrecord_id"  size="1" value="<?php echo $row['RECORD_ID']; ?>">
 						<input type="hidden" name="hdnEditrecord_id" value="<?php echo $row['RECORD_ID']; ?>">

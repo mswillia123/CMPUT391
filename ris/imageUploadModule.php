@@ -14,12 +14,22 @@ error check for unique key error
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <head><link href="base.css" rel="stylesheet" type="text/css"></head>
+<body>
+
+
 <h2>Image Upload</h2>
 <a href="manageRadiologyRecords.php"> Radiology Record Module</a><p>
+
 <?php
-	include("PHPconnectionDB.php");
-	include("imageMultipleView.php");
-	include("imageResize.php");
+include("PHPconnectionDB.php");
+include("sessionCheck.php");
+include("imageMultipleView.php");
+include("imageResize.php");
+if (!sessionCheck()) {
+	header('Location: loginModule.php');	
+} else {
+
+
 	
 	// Function: uploads/inserts an image to the pacs_images table
 	// Parameters:
@@ -28,75 +38,38 @@ error check for unique key error
 	//		$imageID, unique identifier for image associated with recordID
 	//		$imageType, image size option (THUMBNAIL, REGULAR_SIZE, FULL_SIZE)
 	function uploadImage($imgfile, $recordID, $imageID, $imageType){
+		error_reporting(E_ALL ^ E_NOTICE);
 		$conn = connect();
 		$lob = oci_new_descriptor($conn, OCI_D_LOB);
-		//$lob2 = oci_new_descriptor($conn, OCI_D_LOB);
-		//$query = "SELECT ".$imageType." FROM PACS_I
-		/*
-		$query = "insert into pacs_images (record_id, image_id, ".$imageType.") "
-			."values(:recordID, :imageID, empty_blob()) returning ".$imageType." into :blobdata "
-			."on duplicate key update ".$imageType." = empty_blob() returning ".$imageType." into :blobdata";
-		*/
-		//update pacs_images set ".$imageType." = empty_blob() where record_id = :recordID and image_id = :imageID returning ".$imageType." into :blobdata";
-		/*
-		begin 
-		insert into t (mykey, mystuff)
-		values ('X', 123);
-		exception
-		when dup_val_on_index then
-		update t
-		set    mystuff = 123
-		where  mykey = 'X';
-		end;
-		*/
 		
-		//$query = "begin "
-		/*
-		$query = "delete from pacs_images where record_id = :recordID and image_id = :imageID";
-		//echo $query;
-		$stmt = oci_parse ($conn, $query);
-		oci_bind_by_name($stmt, ':recordID', $recordID);
-		oci_bind_by_name($stmt, ':imageID', $imageID);
-		$e = oci_execute($stmt);
-		oci_free_statement($stmt);
-		*/
+		//Check whether row with recordID and imageID exists
+		$query = "select * from pacs_images "
+		."where record_id = :recordID and image_id = :imageID";
+		$stid = oci_parse($conn, $query);
+		oci_bind_by_name($stid, ':recordID', $recordID);
+		oci_bind_by_name($stid, ':imageID', $imageID);
+		oci_execute($stid, OCI_DEFAULT);
+		echo "Num of rows: ".oci_num_rows($stid);
+		if (oci_fetch_all($stid, $res) > 0){
+			//update record if it exists
 
-		/*
-		$query = "insert into pacs_images (record_id, image_id, ".$imageType.") "
-		."values(:recordID, :imageID, empty_blob()) "		
-		."returning ".$imageType." into :blobdata;"
-		."exception "
-		."when dup_val_on_index then "
-		."update pacs_images set ".$imageType." = empty_blob() "
-		."where record_id = :recordID and image_id = :imageID "
-		."returning ".$imageType." into :blobdata; ";
-		*/
-		
-		/* Merge does not work with 'returning'
-		 * this was the last query that I tried
-		 */
-		/*
-		$query = "merge into pacs_images "
-		."using dual on (record_id = :recordID and image_id = :imageID) "
-		."when matched then "
-		."update set ".$imageType." = empty_blob() "
-		//."where record_id = :recordID and image_id = :imageID "
-		."returning ".$imageType." into :blobdata "
-		."when not matched then "		
-		."insert (record_id, image_id, ".$imageType.") "
-		."values (:recordID, :imageID, empty_blob()) "
-		."returning ".$imageType." into :blobdata;";
-		*/
-		//."end;";
-		$query = "update pacs_images set ".$imageType." = empty_blob() "
-		."where record_id = :recordID and image_id = :imageID;";	
+			$query ="update pacs_images set ".$imageType." = empty_blob() "
+			."where record_id = :recordID and image_id = :imageID "
+			."returning ".$imageType." into :blobdata";
+		} else {
+			//insert new record if it does not exist
+			$query = "insert into pacs_images (record_id, image_id, ".$imageType.") "
+			."values(:recordID, :imageID, empty_blob()) "
+			."returning ".$imageType." into :blobdata";
+		}
+		oci_free_statement($stid);
 		echo $query;
-		$query = oci_parse($conn, $query);
-		oci_bind_by_name($query, ':recordID', $recordID);
-		oci_bind_by_name($query, ':imageID', $imageID);
-		oci_bind_by_name($query, ':blobdata', $lob, -1, OCI_B_BLOB);
+		$stid = oci_parse($conn, $query);
+		oci_bind_by_name($stid, ':recordID', $recordID);
+		oci_bind_by_name($stid, ':imageID', $imageID);
+		oci_bind_by_name($stid, ':blobdata', $lob, -1, OCI_B_BLOB);
 		//oci_bind_by_name($stmt, ':blobdata2', $lob2, -1, OCI_B_BLOB);
-		oci_execute($query, OCI_DEFAULT);  // Note OCI_DEFAULT
+		oci_execute($stid, OCI_DEFAULT);  // Note OCI_DEFAULT
 		
 		if ($lob->save($imgfile)) {
 			oci_commit($conn);
@@ -119,7 +92,7 @@ error check for unique key error
 		
 		// Display thumbnail list
 		// Must be all-caps for imageResize and imageView queries
-		multi_image($recordID, 'REGULAR_SIZE'); 
+		multi_image($recordID, 'THUMBNAIL');
 ?>		
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
 		<table>
@@ -148,62 +121,27 @@ error check for unique key error
 		$recordID = $_POST["hdnCmd"];
 		$imageID = $_POST["txtEditimageID"];		
 		// Database connection
-		$conn = connect();
-
-		  
-		  // Delete then overwrite) any existing BLOB with the same record and image ID's
-		  /*		  
-		  $query = "delete from pacs_images where record_id = :recordID and image_id = :imageID";
-		  //echo $query;
-		  $stmt = oci_parse ($conn, $query);
-		  oci_bind_by_name($stmt, ':recordID', $recordID);
-		  oci_bind_by_name($stmt, ':imageID', $imageID);
-		  $e = oci_execute($stmt);
-		  oci_free_statement($stmt);
-		  */
-		  //$imgfile = $_FILES['image']['tmp_name'];
-		  //$src_img = imagecreatefromjpeg($imgfile);
-		  //**Resizing is currently broken
-		
-		  //$src_img = resize(50, $src_img);
-		  //$scaled = addslashes($scaled);
+		$conn = connect();		
 		  
 		//Upload full sized image  
 		uploadImage($_FILES['image']['tmp_name'], $recordID, $imageID, 'FULL_SIZE');
-		echo '<img src="data:image/jpg;base64,' .  base64_encode($_FILES['image']['tmp_name'])  . '" />';
+		//echo '<img src="data:image/jpg;base64,' .  base64_encode($_FILES['image']['tmp_name'])  . '" />';
 		
 		//Resize to regular size image and store to DB
 		$scaled = resize(200, $_FILES['image']['tmp_name']);
 		uploadImage($scaled, $recordID, $imageID, 'REGULAR_SIZE');
+		//echo '<img src="data:image/jpg;base64,' .  base64_encode($scaled)  . '" />';
 		
-		//Resize to thumbnail image and store to DB
-		echo '<img src="data:image/jpg;base64,' .  base64_encode($scaled)  . '" />';
+		//Resize to thumbnail image and store to DB		
+		$scaled = resize(50, $_FILES['image']['tmp_name']);		  
+		uploadImage($scaled, $recordID, $imageID, 'THUMBNAIL');
+		 //echo '<img src="data:image/jpg;base64,' .  base64_encode($scaled)  . '" />';
 		
-		  $scaled = resize(50, $_FILES['image']['tmp_name']);		  
-		  uploadImage($scaled, $recordID, $imageID, 'THUMBNAIL');
-		  echo '<img src="data:image/jpg;base64,' .  base64_encode($scaled)  . '" />';
-		  
 
-
-		  
-		  
-		  /*
-		  header("Content-type: image/JPEG");
-		  ?>
-		  <td><?=$imageID?></td><td><img src="imageView.php?recordID=<?=$recordID?>&imageID=<?=$row["IMAGE_ID"]?>&imageType=<?=$imageType?>" /></td>
-		  <?php 		  //echo $scaled;
-		  */
-		  //$src_img = resize(50, $_FILES['image']['tmp_name']);
-		  //$imgfile2 = resize(200, $imgfile);
-
-
-		  //$imgfile2 = resize(50, $imgfile);
-		  //$imgfile2 = resize(200, $imgfile);
-		  //$src_img = imagecreatefromjpeg($imgfile);
-		  //uploadImage($src_img, $recordID, $imageID, 'THUMBNAIL');
-
-		  //header('Location: imageUploadModule.php?recordID='.$recordID.'');
+		  header('Location: imageUploadModule.php?recordID='.$recordID.'');
 	}
+}
+?>
 	
-	?>
+</body>
 </html>
