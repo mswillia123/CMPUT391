@@ -176,17 +176,18 @@ if (!sessionCheck()) {
 						<input type="hidden" name="txtEditrecord_id"  size="1" value="<?php echo $row['RECORD_ID']; ?>">
 						<input type="hidden" name="hdnEditrecord_id" value="<?php echo $row['RECORD_ID']; ?>">
 					</div></td>
-					<td><div align="center"><input type="text" name="txtEditpatient_id" size="1" value="<?php echo $row['PATIENT_ID']; ?>"></div></td>
-					<td><div align="center"><input type="text" name="txtEditdoctor_id" size="1" value="<?php echo $row['DOCTOR_ID']; ?>"></div></td>
-					<td><div align="center"><input type="text" name="txtEditradiologist_id" size="1" value="<?php echo $row['RADIOLOGIST_ID']; ?>"></div></td>
+					<td><div align="center"><input type="text" name="txtEditpatient_id" size="15" value="<?php echo $row['PATIENT_ID']; ?>"></div></td>
+					<td><div align="center"><input type="text" name="txtEditdoctor_id" size="15" value="<?php echo $row['DOCTOR_ID']; ?>"></div></td>
+					<td><div align="center"><input type="text" name="txtEditradiologist_id" size="15" value="<?php echo $row['RADIOLOGIST_ID']; ?>"></div></td>
 					<td><div align="center"><input type="text" name="txtEdittest_type" size="15" value="<?php echo $row['TEST_TYPE']; ?>"></div></td>
-					<td><div align="center"><input type="date" name="txtEditprescribing_date" size="1" value="<?php echo $row['TEST_DATE']; ?>"></div></td>
-					<td><div align="center"><input type="date" name="txtEdittest_date" size="1" value="<?php echo $row['PRESCRIBING_DATE']; ?>"></div></td>							
+					<td><div align="center"><input type="date" name="txtEditprescribing_date" size="15" value="<?php echo $row['TEST_DATE']; ?>"></div></td>
+					<td><div align="center"><input type="date" name="txtEdittest_date" size="15" value="<?php echo $row['PRESCRIBING_DATE']; ?>"></div></td>							
 					<td><div align="center"><input type="text" name="txtEditdiagnosis" size="15" value="<?php echo $row['DIAGNOSIS']; ?>"></div></td>	
 					<td><div align="center"><input type="text" name="txtEditdescription" size="15" value="<?php echo $row['DESCRIPTION']; ?>"></div></td>
 					<td colspan="2" align="right"><div align="center">
 						<input name="btnAdd" type="button" id="btnUpdate" value="Update" OnClick="frmMain.hdnCmd.value='Update';frmMain.submit();">
-						<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location=<?php echo $_SERVER['PHP_SELF']; ?>;">
+						<input name="btnAdd" type="button" id="btnCancel" value="Cancel" OnClick="window.location='<?php echo $_SERVER['PHP_SELF'];?>';">
+
 					</div></td>
 				</tr>
 				<?php
@@ -235,7 +236,38 @@ if (!sessionCheck()) {
 			    </tr>
 		</table>
 		</form>
+		
+		
 		<?php
+		$str  = "select p.person_id, p.first_name, p.last_name, u.user_name, u.class from persons p, users u where p.person_id = u.person_id";
+		$stid = oci_parse($conn, $str);
+		$res  = oci_execute($stid);
+		if ($res) {
+			oci_commit($conn);
+		} else {
+			$e = oci_error($stid);
+			echo "Error Add [" . $e['message'] . "]";
+		}
+		
+		//Display selected data
+		echo "<h3>Person reference table</h3>";
+		echo "<table>";
+		$number_columns = oci_num_fields($stid);
+		for ($i = 1; $i <= $number_columns; ++$i) {
+			echo " <th style='text-align:center'>".strtolower(oci_field_name($stid, $i))."</th>";
+		}
+		while ($row = oci_fetch_array($stid, OCI_NUM)) {
+			echo "<tr>";
+			//foreach ($row as $item) {
+				//echo "<td>". ($item !== null ? htmlentities($item, ENT_QUOTES):".") . "</td>";
+			//}
+			for ($i = 0; $i < $number_columns; $i++) {
+				echo "<td style='text-align:center'>" . ($row[$i] != null ? $row[$i] : "-------"). "</td>";
+			}
+			echo "</tr>";			
+		}
+		
+		
 	}
 
 } //end of sessionCheck if statement
