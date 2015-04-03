@@ -6,6 +6,9 @@
 	Generalization allows roll up and drill down on time periods weekly, monthly, yearly, or full data (daily)
 	
 	Author: Michael Williams
+	
+	Code reference: http://docs.oracle.com/cd/B19306_01/server.102/b14223/aggreg.htm#i1007413
+	Author: Oracle
 -->
 
 
@@ -48,31 +51,38 @@ if (!sessionCheck()) {
 		
 		switch ($period) {
 			case "month":
-				$date_format = "'Mon YYYY'";
-				$date_string = "day_year";
+				$date_format = "TO_CHAR(R.TEST_DATE, 'YYYY') as year, TO_CHAR(R.TEST_DATE, 'Mon') as month";
+				$date_rollup = "TO_CHAR(R.TEST_DATE, 'YYYY'), TO_CHAR(R.TEST_DATE, 'Mon')";
 				break;
 			case "week":
-				$date_format = "'WW-YYYY'";
-				$date_string = "week-year";
+				//if month is required along with week, use the following instead
+				$date_format = "TO_CHAR(R.TEST_DATE, 'YYYY') as year, TO_CHAR(R.TEST_DATE, 'Mon') as month, TO_CHAR(R.TEST_DATE, 'W') as week";
+				$date_rollup = "TO_CHAR(R.TEST_DATE, 'YYYY'), TO_CHAR(R.TEST_DATE, 'Mon'), TO_CHAR(R.TEST_DATE, 'W')";
+
+				//$date_format = "TO_CHAR(R.TEST_DATE, 'YYYY') as year, TO_CHAR(R.TEST_DATE, 'WW') as week";
+				//$date_rollup = "TO_CHAR(R.TEST_DATE, 'YYYY'), TO_CHAR(R.TEST_DATE, 'WW')";
 				break;
 			case "year":
-				$date_format = "'YYYY'";
-				$date_string = "year";
+				//$date_format = "'YYYY'";
+				$date_format ="TO_CHAR(R.TEST_DATE, 'YYYY') as year";
+				$date_rollup ="TO_CHAR(R.TEST_DATE, 'YYYY')";
 				break;
 			default: //All (daily)
-				$date_format .= "'Mon DD, YYYY '";
-				$date_string = "full_date";
+				//$date_format .= "'Mon DD, YYYY '";
+				$date_format = "TO_CHAR(R.TEST_DATE, 'YYYY') as year, TO_CHAR(R.TEST_DATE, 'Mon') as month, TO_CHAR(R.TEST_DATE, 'DD') as day";
+				$date_rollup = "TO_CHAR(R.TEST_DATE, 'YYYY'), TO_CHAR(R.TEST_DATE, 'Mon'), TO_CHAR(R.TEST_DATE, 'DD')";
 		}
 		
 		$query = "SELECT "
-		.$patient_format.$test_format
-		."TO_CHAR(R.TEST_DATE, ".$date_format.") as ".$date_string
+		.$patient_format.$test_format.$date_format
 		." ,COUNT(*) as images "
 		."FROM RADIOLOGY_RECORD R, PACS_IMAGES P "
 		."WHERE R.RECORD_ID = P.RECORD_ID "
 		."GROUP BY ROLLUP ("
-		.$patient_format.$test_format
-		."R.TEST_DATE) ";
+		.$patient_format.$test_format.$date_rollup
+		.") ";
+		
+		//echo $query;
 		
 		$stid = oci_parse($conn, $query);
 		$res  = oci_execute($stid);
