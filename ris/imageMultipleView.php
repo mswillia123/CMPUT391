@@ -9,23 +9,23 @@
 
 <?php 
 function multi_image($recordID, $imageType){
-	echo "<b>Uploading images for radiology record #".$recordID."</b><p>"; 
 	$conn = connect();
 	// Select all image_ID associated with record_ID
-	$sql = "SELECT IMAGE_ID FROM PACS_IMAGES WHERE RECORD_ID = :recordID AND :imageType IS NOT NULL";
+	$sql = "SELECT IMAGE_ID, ".$imageType." FROM PACS_IMAGES WHERE RECORD_ID = ".$recordID." AND ".$imageType." IS NOT NULL";
+	echo $query;
 	$stid = oci_parse($conn, $sql);
-	oci_bind_by_name($stid, ':recordID', $recordID);
-	oci_bind_by_name($stid, ':imageType', $imageType);
 	oci_execute($stid);
-	echo "<table><tr>";
+	echo "<table ><tr>";
+	echo $query;
+	// Display image of specified type (thumbnail, regular, full size)
 	while($row = oci_fetch_array($stid, OCI_ASSOC)){
 		if (!$row) {
 			header('Status: 404 Not Found');
 		} else {
-		// Each table cell calls/redirects to imageView.php to render image with proper content type
-?>
-		<td><?=$row["IMAGE_ID"]?></td><td><img src="imageView.php?recordID=<?=$recordID?>&imageID=<?=$row["IMAGE_ID"]?>&imageType=<?=$imageType?>" /></td>
-		<?php 
+			$result = base64_encode($row[$imageType]->load());
+			echo '<td>';
+			echo $row['IMAGE_ID'];
+			echo '</td><td><img src="data:image/jpeg;base64,'.$result.'" /></span></td>';
 		}
 	}
 	echo "</tr></table>";
