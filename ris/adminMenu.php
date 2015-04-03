@@ -1,3 +1,6 @@
+<!--
+    Administrator's menu that displays the administrator's module options.
+-->
 <html>
     <body>
         <h2>Administrator Menu</h2>

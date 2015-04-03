@@ -11,6 +11,9 @@
  * Date: 3/22/15
  */
 
+/*
+ * Verifies that the user's input into the search module form is vaild.
+ */
 function verifyInput($keywords, $ordering, $start_date, $end_date, $pattern) {
     if ($keywords == '' and $ordering == 'rank') {
         echo 'Cannot search by relevance without keywords.<br/>';
@@ -40,6 +43,10 @@ function verifyInput($keywords, $ordering, $start_date, $end_date, $pattern) {
     }
 }
 
+/*
+ * Generates the appropriate search query depending on the user's input into
+ * the search module.
+ */
 function generateSearchQuery($userType, $person_id, $keywords, $ordering, $time_ref, $start_date, $end_date) {
 
     // Keywords used

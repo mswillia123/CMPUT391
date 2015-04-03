@@ -17,6 +17,9 @@ if (!function_exists('sqlQuery')) {
     include("sqlQuery.php");
 }
 
+/*
+ * Displays the table used in the report generating module.
+ */
 function reportTable($stid) {
     $resultsFlag = false;
     $column_num = 5;
@@ -49,6 +52,9 @@ function reportTable($stid) {
     }
 }
 
+/*
+ * Displays the table used in the search module.
+ */
 function searchTable($stid) {
     $resultsFlag = false;
     $column_num = 10;
@@ -93,6 +99,10 @@ function searchTable($stid) {
     }
 }
 
+/*
+ * Displays image thumbnails in the search module and calls the zoom facility if
+ * clicked.
+ */
 function displayThumbnails($row) {
     $conn2 = connect();
     // 0 image_id, 1 thumbnail, 2 regular_size, 3 full_size

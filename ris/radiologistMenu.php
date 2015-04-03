@@ -1,3 +1,6 @@
+<!--
+    Radiologist's menu that displays the radiologist's module options.
+-->
 <html>
     <body>
     <h2>Radiologist Menu</h2>
