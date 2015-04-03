@@ -89,7 +89,9 @@ if (!sessionCheck()) {
 		// Display thumbnail list, calling multi_image function (imageMultipleView.php), which in
 		// turn resizes and displays images via imageResize.php and imageView.php
 		// Must be all-caps for imageResize and imageView queries
+		echo "<b>Images for radiology record #".$recordID."</b><p>"; 
 		multi_image($recordID, 'THUMBNAIL');
+
 ?>		
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
 		<table>
@@ -118,14 +120,21 @@ if (!sessionCheck()) {
 		$conn = connect();		
 		  
 		//Call image upload function to store images in database		
-		//Store full sized image to DB
-		uploadImage($_FILES['image']['tmp_name'], $recordID, $imageID, 'FULL_SIZE');
 		
-		//Resize to regular size image and store to DB
+		//Convert buffered ($_FILES) representation of jpeg into
+		//php GD internal representation before passing to uploadImage
+		$src = imagecreatefromjpeg($_FILES['image']['tmp_name']);
+		ob_start();
+    imagejpeg($src);
+    $final_image = ob_get_clean();
+    //Store full sized image to DB
+		uploadImage($final_image, $recordID, $imageID, 'FULL_SIZE');
+		
+		//Call resize function (imageResize.php) to resize to regular size image and store to DB
 		$scaled = resize(200, $_FILES['image']['tmp_name']);
 		uploadImage($scaled, $recordID, $imageID, 'REGULAR_SIZE');
 		
-		//Resize to thumbnail image and store to DB		
+		//Call resize function (imageResize.php) to resize to  thumbnail image and store to DB		
 		$scaled = resize(50, $_FILES['image']['tmp_name']);		  
 		uploadImage($scaled, $recordID, $imageID, 'THUMBNAIL');
 		

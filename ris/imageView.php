@@ -22,9 +22,12 @@
 	
 	oci_execute($stid);
 	//extract image blob from the selection array and display as jpg
+	//echo src="data:image/jpeg;base64,'.$regular.'"$result;
 	$arr = oci_fetch_array($stid, OCI_ASSOC);
-	$result = $arr[$imageType]->load();
-	header("Content-type: image/JPEG");
-	echo $result;
+	$result = base64_encode($arr[$imageType]->load());
+	echo '<img src="data:image/jpeg;base64,'.$result.'" />';
+	//echo '<img src="data:image/jpeg;base64,'.$full.'"/>';
+	//header("Content-type: image/JPEG");
+	//echo $result;
 	oci_close($conn);
 ?>
