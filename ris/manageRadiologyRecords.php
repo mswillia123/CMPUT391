@@ -1,17 +1,5 @@
-<!--TODO
-	error checking
-	fix date field population issue (blank insert to db) on edit
-	close connections
-	use sqlquery function
-	render return - menu return
-	order by record id
-	(images - content type other than jpeg)
-	indicate borrowed code references
-	cleanup upload code
-	area box for description
--->
-
 <!--
+	Manage Radiology Records:
 	Update or delete existing records, create new records, add images to records.
 	
 	Author: Michael Williams
@@ -24,13 +12,18 @@
 <?php
 include("sessionCheck.php");
 include("PHPconnectionDB.php");
+include("userInfoDisplay.php");
 
 if (!sessionCheck()) {
 	header('Location: loginModule.php');
 } else {
-
+	
+	echo "<h2>Radiology Record Module</h2>";
+	userInfoDisplay();
+	echo "<a href='radiologistMenu.php'> Radiologist menu</a><p>";
 	error_reporting(E_ALL ^ E_NOTICE);
 	$conn = connect();
+	
 	// Add record button selected: Add a new radiology record from the filled form data
 	if ($_POST['hdnCmd'] == "Add") {
 		$str = "insert into radiology_record (record_id, patient_id, doctor_id, radiologist_id, test_type, prescribing_date, test_date, diagnosis, description) ";
@@ -59,17 +52,7 @@ if (!sessionCheck()) {
 		$str .="SELECT first_name || ' ' || last_name INTO patient_name ";
 		$str .="FROM   persons ";
 		$str .="WHERE  person_id = ". $_POST['txtAddpatient_id'].";";	
-		
-		/*
-		$str .="SELECT diagnosis INTO rs_diagnosis ";
-		$str .="FROM   radiology_record ";
-		$str .="WHERE  record_id = ". $_POST['txtAddrecord_id'] .";";
-		
-		$str .="SELECT description INTO rs_description ";
-		$str .="FROM   radiology_record ";
-		$str .="WHERE  record_id = ". $_POST['txtAddrecord_id'] .";";
-		*/
-		
+			
 		$str .="INSERT INTO radiology_search VALUES";
 		$str .="(". $_POST['txtAddrecord_id'] .", ". $_POST['txtAddpatient_id'] .", patient_name, '" . $_POST['txtAdddiagnosis'] . "', '" . $_POST['txtAdddescription'] . "'); END;";
 		
@@ -81,10 +64,9 @@ if (!sessionCheck()) {
 		} else {
 			$e = oci_error($stid);
 			echo "Error Add [" . $e['message'] . "]";
-		}
-		
-		
+		}		
 	}
+	
 	// Update button selected: Update existing DB record from edited changes to row
 	if ($_POST['hdnCmd'] == "Update") {
 		$str = "update radiology_record set ";
@@ -167,8 +149,7 @@ if (!sessionCheck()) {
 	} else {
 	
 ?>             
-		<h2>Radiology Record Module</h2>	
-		<a href="radiologistMenu.php"> Radiologist menu</a><p>				
+				
 		<form name="frmMain" method="post" action="<?php echo $_SERVER['PHP_SELF']?>">
         <input type="hidden" name="hdnCmd" value=".">
 		<table >                						
@@ -186,12 +167,10 @@ if (!sessionCheck()) {
 		<?php
 		// Iterate through all selected rows
 		while ($row = oci_fetch_array($stid, OCI_BOTH))
-		{
-			
+		{			
 			// If edit button selected, enter editing mode with editable fields on the selected row
 			// Update button submits form to page (self) with POST using hidden button named Update
-			if ($row['RECORD_ID'] == $_GET['keyID'] and $_GET['Action'] == "Edit") {
-?>
+			if ($row['RECORD_ID'] == $_GET['keyID'] and $_GET['Action'] == "Edit") {?>
 				<tr>
 					<td><div align="center"><?php echo $row['RECORD_ID']; ?>
 						<input type="hidden" name="txtEditrecord_id"  size="1" value="<?php echo $row['RECORD_ID']; ?>">

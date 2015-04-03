@@ -1,19 +1,9 @@
-<!--TODO*******************
-	error checking
-	fix date field population issue (blank insert to db) on edit
-	close connections
-	use sqlquery function
-	render return - menu return
-	order by record id
-	indicate borrowed code references
-	cleanup upload code
--->
-
 <!--
-	Persons table record management:
-	Update or delete existing records, create new records.
+	User management module: Manage Persons
+	Update or delete existing persons records, create new records.
 	
 	Author: Michael Williams
+	
 -->
 
 <html>
@@ -23,12 +13,19 @@
 <?php
 include("sessionCheck.php");
 include("PHPconnectionDB.php");
+include("userInfoDisplay.php");
 if (!sessionCheck()) {
 	header('Location: loginModule.php');
 } else {
+	
+	echo "<h2>User Management Module</h2>";
+	userInfoDisplay();
+	echo "<a href='adminMenu.php'>Administrator menu</a><br><br>";
+	 
 	error_reporting(E_ALL ^ E_NOTICE);
 	$conn = connect();
-	// 'Add record' button selected: Add a new DB record from the filled form data
+	
+	// 'Add record' button selected: Add a new persons record from the filled form data
 	if ($_POST["hdnCmd"] == "Add") {
 		$str = "INSERT INTO PERSONS ";
 		$str .= "(PERSON_ID, FIRST_NAME, LAST_NAME, ADDRESS, EMAIL, PHONE) ";
@@ -47,6 +44,7 @@ if (!sessionCheck()) {
 			echo "Error Add [" . $e['message'] . "]";
 		}
 	}
+	
 	// Update button selected: Update existing DB record from edited changes to row
 	if ($_POST["hdnCmd"] == "Update") {
 		$str = "UPDATE PERSONS SET ";
@@ -83,13 +81,13 @@ if (!sessionCheck()) {
 	$sql  = "SELECT * FROM persons";
 	$stid = oci_parse($conn, $sql);
 	$res  = oci_execute($stid);
+	
 	if (!$res) {
 		$err = oci_error($stid);
 		echo htmlentities($err['message']);
 	} else {
 ?>              
-		<h2>User Management Module</h2>
-		
+
 		<div class="tabGroup">
 		<input type="radio" name="tabGroup1" id="rad1" class="tab1" onclick="document.location.href='manageUsers.php'" />
 		<label for="rad1">Users</label>
@@ -118,10 +116,12 @@ if (!sessionCheck()) {
 			<th> <div align="center">Phone </div></th>
 		</tr>
 		<?php
+		
 		// Iterate through all selected rows
 		while ($row = oci_fetch_array($stid, OCI_BOTH)) 
 		{
 			// If edit button selected, enter editing mode with editable fields on the selected row
+			// Update button submits form to page (self) with POST using hidden button named Update
 			if ($row["PERSON_ID"] == $_GET["keyID"] and $_GET["Action"] == "Edit") 
 			{
 ?>
@@ -154,7 +154,10 @@ if (!sessionCheck()) {
 				</tr>
 				<?php
 			} else {
-				// Render and display all record information for all non-edit mode rows 
+			// Render and display all record information for all non-edit mode rows
+			// Icon buttons for editing and deleting records:
+			// Edit button reloads page with edit POST action and record ID
+			// Delete button reloads page with delete GET action and record ID	
 ?>					  
 				<tr>
 					<td><div align="center"><?php echo $row["PERSON_ID"]; ?></div></td>
@@ -169,7 +172,8 @@ if (!sessionCheck()) {
 				<?php
 			}
 		}
-				// Render and display form fields for new record details and submission
+		// Render and display form fields for adding new record details and form submission
+		// Add button submits form to page (self) with POST using hidden button named Add
 ?>				
 				<tr>
 				    <td><div align="center"><input type="text" name="txtAddperson_id" size="15" ></div></td>

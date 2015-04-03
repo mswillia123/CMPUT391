@@ -22,7 +22,7 @@ function multi_image($recordID, $imageType){
 		if (!$row) {
 			header('Status: 404 Not Found');
 		} else {
-		// redirect to imageView.php to render image with proper content type
+		// Each table cell calls/redirects to imageView.php to render image with proper content type
 ?>
 		<td><?=$row["IMAGE_ID"]?></td><td><img src="imageView.php?recordID=<?=$recordID?>&imageID=<?=$row["IMAGE_ID"]?>&imageType=<?=$imageType?>" /></td>
 		<?php 

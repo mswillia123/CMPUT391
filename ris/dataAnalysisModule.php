@@ -1,3 +1,14 @@
+<!--
+	Data Analysis Module:
+	Allows system administrator to create an OLAP report
+	Information generated as a datacube on patient_name, test_type, and test_date
+	Display selectable by patient_name (optional), test_type (optional), and test_date
+	Generalization allows roll up and drill down on time periods weekly, monthly, yearly, or full data (daily)
+	
+	Author: Michael Williams
+-->
+
+
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <head><link href="base.css" rel="stylesheet" type="text/css"></head>
@@ -9,7 +20,6 @@ if (!sessionCheck()) {
 	header('Location: loginModule.php');
 
 } else {
-
 	
 	if (isset($_POST['submit']))  {	
 
@@ -20,47 +30,15 @@ if (!sessionCheck()) {
 		error_reporting(E_ALL ^ E_NOTICE);
 		$conn = connect();	
 		
-		/*Generate a data cube for the number of records for patient_name,
-		 * test_type, and time (from test_date)
-		 */
-		
-		/*
-		 $query ="SELECT PATIENT_ID, TEST_TYPE, TEST_DATE, COUNT(*) "
-		."FROM   RADIOLOGY_RECORD "
-		."GROUP BY CUBE (PATIENT_ID, TEST_TYPE, TEST_DATE)";
-		*/
-		
-		/*
-	SELECT R.PATIENT_ID, R.TEST_TYPE, TO_CHAR(R.TEST_DATE, 'YYYY'), COUNT(*) 
-	FROM   RADIOLOGY_RECORD R, PACS_IMAGES P
-	WHERE  R.RECORD_ID = P.RECORD_ID
-	GROUP BY CUBE (R.PATIENT_ID, R.TEST_TYPE, TO_CHAR(R.TEST_DATE, 'YYYY'));
-  --GROUP BY ROLLUP (to_char(R.TEST_DATE,'MON'))
-		 */
-		/*
-		 * SELECT R.PATIENT_ID, R.TEST_TYPE,TO_CHAR(R.TEST_DATE, 'mon yyyy'), COUNT(*) 
-	FROM   RADIOLOGY_RECORD R, PACS_IMAGES P
-	WHERE  R.RECORD_ID = P.RECORD_ID
-  --SELECT R.PATIENT_ID, R.TEST_TYPE, TO_CHAR(R.TEST_DATE, 'YYYY'), COUNT(*)
-	--GROUP BY CUBE (R.PATIENT_ID, R.TEST_TYPE, TO_CHAR(R.TEST_DATE, 'YYYY'));
-  GROUP BY ROLLUP(R.PATIENT_ID, R.TEST_TYPE,TO_CHAR(R.TEST_DATE, 'mon yyyy')) --, TO_CHAR(R.TEST_DATE, 'YYYY'))
-		  ORDER BY (R.TEST_TYPE)
-		 */
-		/*
-		 * SELECT R.PATIENT_ID, R.TEST_TYPE, TO_CHAR(R.TEST_DATE, 'Mon DD YY'), COUNT(*) 
-	FROM   RADIOLOGY_RECORD R, PACS_IMAGES P
-	WHERE  R.RECORD_ID = P.RECORD_ID
-  --SELECT R.PATIENT_ID, R.TEST_TYPE, TO_CHAR(R.TEST_DATE, 'YYYY'), COUNT(*)
-	--GROUP BY CUBE (R.PATIENT_ID, R.TEST_TYPE, TO_CHAR(R.TEST_DATE, 'YYYY'));
-  GROUP BY ROLLUP(R.PATIENT_ID, R.TEST_TYPE,TO_CHAR(R.TEST_DATE, 'Mon DD YY')) --, TO_CHAR(R.TEST_DATE, 'YYYY'))
-  ORDER BY (R.TEST_TYPE)
-		 */
-		
-		
+		//Generate a data cube for the number of records for patient_name,
+		//test_type, and time (from test_date)	
 		$patient = $_POST['patient'];
 		$test_type = $_POST['test_type'];
 		$period = $_POST['period'];
-		//echo $patient;
+
+		//Create query criteria string based upon form selections
+		//Group by rollup, grouping organization priority: patient_id (when selected), 
+		//test_type (when selected), and time period (daily, weekly, monthly, or yearly) 
 		if ($patient != "") {
 			$patient_format = "R.PATIENT_ID, ";
 		}
@@ -69,26 +47,19 @@ if (!sessionCheck()) {
 		}	
 		
 		switch ($period) {
-			//case "all":
-			//	code to be executed if n=label1;
-			//	break;
 			case "month":
-				//$date_format = "YYYY Mon";
 				$date_format = "'Mon YYYY'";
 				$date_string = "day_year";
 				break;
 			case "week":
-				//$date_format = "YYYY WW";
 				$date_format = "'WW-YYYY'";
 				$date_string = "week-year";
 				break;
 			case "year":
-				//$date_format = "YYYY";
 				$date_format = "'YYYY'";
 				$date_string = "year";
 				break;
-			default: //All
-				//$date_format = "DD Mon yy";
+			default: //All (daily)
 				$date_format .= "'Mon DD, YYYY '";
 				$date_string = "full_date";
 		}
@@ -103,27 +74,6 @@ if (!sessionCheck()) {
 		.$patient_format.$test_format
 		."R.TEST_DATE) ";
 		
-		/*
-		."ORDER BY "
-		.$patient_format.$test_format
-		."R.TEST_DATE";
-		*/
-		
-		/*
-		 * 		$query ="SELECT R.PATIENT_ID, R.TEST_TYPE, TO_CHAR(R.TEST_DATE, 'Mon yyyy'), COUNT(*) "
-		."FROM RADIOLOGY_RECORD R, PACS_IMAGES P "
-		."WHERE R.RECORD_ID = P.RECORD_ID "
-		."GROUP BY CUBE (PATIENT_ID, TEST_TYPE, TO_CHAR(R.TEST_DATE, 'Mon yyyy'))";
-		
-		if ($patient_format !="") {
-			$query .="R.PATIENT_ID, ";
-		}
-		if ($test_format != ""){
-			$query .="R.TEST_TYPE, ";
-		}
-		 */
-
-		//echo $query;
 		$stid = oci_parse($conn, $query);
 		$res  = oci_execute($stid);
 		if ($res) {
@@ -133,16 +83,13 @@ if (!sessionCheck()) {
 			echo "Error Select [" . $e['message'] . "]";
 		}
 		
-		/*Display data cube
-		 * 
-		 */
+		//Display selected data
 		echo "<table>";
 		$number_columns = oci_num_fields($stid);
 		for ($i = 1; $i <= $number_columns; ++$i) {
 			echo " <th style='text-align:center'>".strtolower(oci_field_name($stid, $i))."</th>";
 		}
 		while ($row = oci_fetch_array($stid, OCI_NUM)) {
-			//https://community.oracle.com/thread/1097016
 			echo "<tr>";
 			//foreach ($row as $item) {
 				//echo "<td>". ($item !== null ? htmlentities($item, ENT_QUOTES):".") . "</td>";
@@ -150,14 +97,13 @@ if (!sessionCheck()) {
 			for ($i = 0; $i < $number_columns; $i++) {
 				echo "<td style='text-align:center'>" . ($row[$i] != null ? $row[$i] : "-------"). "</td>";
 			}
-			echo "</tr>";
-			
+			echo "</tr>";			
 		}
 		echo "</table>";
 		
 		oci_close($conn);
 	} else {
-		
+		//Display analysis options form
 		?>
 		<h2>Data Analysis Module</h2>
 		<a href='adminMenu.php'> Administrator menu</a>

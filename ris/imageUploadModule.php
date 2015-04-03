@@ -1,8 +1,4 @@
-<!--  TODO
-deal with error if page is navigated without ID's
-change hdnCmd and txtEdit names
-error check for unique key error
--->
+
 <!-- 
 	Selects and renders an image from passed recordID and associated imageID
 	Variables passed by URL: 
@@ -10,12 +6,15 @@ error check for unique key error
 		$imageID, unique image identifier for associated recordID
 		$imageType, image size option (THUMBNAIL, REGULAR_SIZE, FULL_SIZE)	
 		Author: Michael Williams
+		
+		Based on code from php.net website:
+		http://php.net/manual/en/function.oci-new-descriptor.php
+		Author: unknown/php.net contributors
  -->
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <head><link href="base.css" rel="stylesheet" type="text/css"></head>
 <body>
-
 
 <h2>Image Upload</h2>
 <a href="manageRadiologyRecords.php"> Radiology Record Module</a><p>
@@ -25,12 +24,11 @@ include("PHPconnectionDB.php");
 include("sessionCheck.php");
 include("imageMultipleView.php");
 include("imageResize.php");
+//Check for user session active
 if (!sessionCheck()) {
 	header('Location: loginModule.php');	
 } else {
-
-
-	
+		
 	// Function: uploads/inserts an image to the pacs_images table
 	// Parameters:
 	//		$imgfile, image to be stored
@@ -52,7 +50,6 @@ if (!sessionCheck()) {
 		echo "Num of rows: ".oci_num_rows($stid);
 		if (oci_fetch_all($stid, $res) > 0){
 			//update record if it exists
-
 			$query ="update pacs_images set ".$imageType." = empty_blob() "
 			."where record_id = :recordID and image_id = :imageID "
 			."returning ".$imageType." into :blobdata";
@@ -68,8 +65,7 @@ if (!sessionCheck()) {
 		oci_bind_by_name($stid, ':recordID', $recordID);
 		oci_bind_by_name($stid, ':imageID', $imageID);
 		oci_bind_by_name($stid, ':blobdata', $lob, -1, OCI_B_BLOB);
-		//oci_bind_by_name($stmt, ':blobdata2', $lob2, -1, OCI_B_BLOB);
-		oci_execute($stid, OCI_DEFAULT);  // Note OCI_DEFAULT
+		oci_execute($stid, OCI_DEFAULT);
 		
 		if ($lob->save($imgfile)) {
 			oci_commit($conn);
@@ -90,7 +86,8 @@ if (!sessionCheck()) {
 	if (!isset($_FILES['image'])) {
 		$recordID = $_GET["recordID"];
 		
-		// Display thumbnail list
+		// Display thumbnail list, calling multi_image function (imageMultipleView.php), which in
+		// turn resizes and displays images via imageResize.php and imageView.php
 		// Must be all-caps for imageResize and imageView queries
 		multi_image($recordID, 'THUMBNAIL');
 ?>		
@@ -98,7 +95,7 @@ if (!sessionCheck()) {
 		<table>
 			<tr>
 				<td>Image ID: </td><td><input type="text" name="txtEditimageID">
-				<input type="hidden" name="hdnCmd" value="<?php echo $_GET["recordID"]?>">
+				<input type="hidden" name="hiddenRecordID" value="<?php echo $_GET["recordID"]?>">
 				</td>
 			</tr>
 			<tr>
@@ -113,32 +110,27 @@ if (!sessionCheck()) {
 		</form>
 	
 	<?php
-	} // end of if statement
-	else {
-		
-	  	// POST file upload
-
-		$recordID = $_POST["hdnCmd"];
+	} else {
+		// POST: file upload button selected
+		$recordID = $_POST["hiddenRecordID"];
 		$imageID = $_POST["txtEditimageID"];		
 		// Database connection
 		$conn = connect();		
 		  
-		//Upload full sized image  
+		//Call image upload function to store images in database		
+		//Store full sized image to DB
 		uploadImage($_FILES['image']['tmp_name'], $recordID, $imageID, 'FULL_SIZE');
-		//echo '<img src="data:image/jpg;base64,' .  base64_encode($_FILES['image']['tmp_name'])  . '" />';
 		
 		//Resize to regular size image and store to DB
 		$scaled = resize(200, $_FILES['image']['tmp_name']);
 		uploadImage($scaled, $recordID, $imageID, 'REGULAR_SIZE');
-		//echo '<img src="data:image/jpg;base64,' .  base64_encode($scaled)  . '" />';
 		
 		//Resize to thumbnail image and store to DB		
 		$scaled = resize(50, $_FILES['image']['tmp_name']);		  
 		uploadImage($scaled, $recordID, $imageID, 'THUMBNAIL');
-		 //echo '<img src="data:image/jpg;base64,' .  base64_encode($scaled)  . '" />';
 		
-
-		  header('Location: imageUploadModule.php?recordID='.$recordID.'');
+		//Return to image upload module (which will display updated thumnail list with new image)
+		header('Location: imageUploadModule.php?recordID='.$recordID.'');
 	}
 }
 ?>

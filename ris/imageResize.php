@@ -1,76 +1,50 @@
+<!-- 
+	Image (jpeg) resizing function
+	Parameters: 
+		$source, image blob passed to function
+		$max_dimension, determines the maximum resized dimensions
+	
+		Author: Michael Williams
+		
+		Based on code from:
+		http://stackoverflow.com/questions/12143635/php-image-scaling-does-not-work
+		Authored by: Cl'
+ -->
+
 <?php
 
-function resize($max_width, $file) {
+function resize($max_dimension, $source) {
 
-    $source_pic = $file;
-    //$max_width = 200;
-    $max_height = $max_width;
+    $source_pic = $source;
+	//determine image blob dimensions
+    list($width, $height) = getimagesize($source);
+	//creates GD image representation from image blob for GD resizing
+    $src = imagecreatefromjpeg($source);
 
-   // list($width, $height, $image_type) = getimagesize($file);
-    list($width, $height) = getimagesize($file);
-
-    /*
-    switch ($image_type)
-    {
-        case 1: $src = imagecreatefromgif($file); break;
-        case 2: $src = imagecreatefromjpeg($file);  break;
-        case 3: $src = imagecreatefrompng($file); break;
-        default: return '';  break;
-    }
-    */
-    $src = imagecreatefromjpeg($file);
-
-    $x_ratio = $max_width / $width;
-    $y_ratio = $max_height / $height;
-
-    if( ($width <= $max_width) && ($height <= $max_height) ){
+    $x_ratio = $max_dimension / $width;
+    $y_ratio = $max_dimension / $height;
+    
+    //determine maximum dimension based upon shortest side of image (ratio of width to height)
+    if( ($width <= $max_dimension) && ($height <= $max_dimension) ){
         $tn_width = $width;
         $tn_height = $height;
-        }elseif (($x_ratio * $height) < $max_height){
+        }elseif (($x_ratio * $height) < $max_dimension){
             $tn_height = ceil($x_ratio * $height);
-            $tn_width = $max_width;
+            $tn_width = $max_dimension;
         }else{
             $tn_width = ceil($y_ratio * $width);
-            $tn_height = $max_height;
+            $tn_height = $max_dimension;
     }
-
-    $tmp = imagecreatetruecolor($tn_width,$tn_height);
-
-    /* Check if this image is PNG or GIF, then set if Transparent*/
-    /*
-    if(($image_type == 1) OR ($image_type==3))
-    {
-        imagealphablending($tmp, false);
-        imagesavealpha($tmp,true);
-        $transparent = imagecolorallocatealpha($tmp, 255, 255, 255, 127);
-        imagefilledrectangle($tmp, 0, 0, $tn_width, $tn_height, $transparent);
-    }
-    */
-    imagecopyresampled($tmp,$src,0,0,0,0,$tn_width, $tn_height,$width,$height);
-
-    /*
-     * imageXXX() only has two options, save as a file, or send to the browser.
-     * It does not provide you the oppurtunity to manipulate the final GIF/JPG/PNG file stream
-     * So I start the output buffering, use imageXXX() to output the data stream to the browser, 
-     * get the contents of the stream, and use clean to silently discard the buffered contents.
-     */
-    ob_start();
 	
-    /*
-    switch ($image_type)
-    {
-        case 1: imagegif($tmp); break;
-        case 2: imagejpeg($tmp, NULL, 100);  break; // best quality
-        case 3: imagepng($tmp, NULL, 0); break; // no compression
-        default: echo ''; break;
-    }
-	*/
-    imagejpeg($tmp);
-    //$final_image = ob_get_contents();
+    //create an internal true color representation of image
+    $temp = imagecreatetruecolor($tn_width,$tn_height);
+	//resize image
+    imagecopyresampled($temp,$src,0,0,0,0,$tn_width, $tn_height,$width,$height);
+    
+    //use object buffer to retrieve resized/resampled image from memory (rather than default, which writes to disk)
+    ob_start();
+    imagejpeg($temp);
     $final_image = ob_get_clean();
-    //ob_end_clean();
-    //header("Content-type: image/JPEG");
-    //echo final_image;
 
     return $final_image;
 }

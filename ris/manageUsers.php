@@ -1,3 +1,10 @@
+<!--
+	User management module: Manage Users
+	Update or delete existing user records, create new records.
+	
+	Author: Michael Williams
+	
+-->
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <head><link href="base.css" rel="stylesheet" type="text/css"></head>
@@ -6,14 +13,20 @@
 			
             include("sessionCheck.php");
             include("PHPconnectionDB.php");
+            include("userInfoDisplay.php");
             if (!sessionCheck()) {
 				header('Location: loginModule.php');
             }
             else {
+            	
+            	echo "<h2>User Management Module</h2>";
+            	userInfoDisplay();
+            	echo "<a href='adminMenu.php'>Administrator menu</a><br><br>";
+            		
             	error_reporting(E_ALL ^ E_NOTICE);            	
             	$conn = connect();
             	
-            	// Add
+				// Add record button selected: Add a new user record from the filled form data
             	if($_POST["hdnCmd"] == "Add")
             	{
             		$str = "INSERT INTO USERS ";
@@ -33,10 +46,9 @@
             			$e = oci_error($stid);
             			echo "Error Add [".$e['message']."]";
             		}
-
             	}
 				
-            	// Update
+				// Update button selected: Update existing DB record from edited changes to row
             	if($_POST["hdnCmd"] == "Update")
             	{
             		$str = "UPDATE USERS SET ";
@@ -57,10 +69,9 @@
             			$e = oci_error($stid);
             			echo "Error Update [".$e['message']."]";
             		}
-
             	}
             	
-            	// Delete
+				// Delete button selected: Delete an existing record
             	if($_GET["Action"] == "Del")
             	{
             		$str = "DELETE FROM USERS WHERE USER_NAME = '".$_GET["keyID"]."' ";
@@ -76,7 +87,8 @@
             			echo "Error Delete [".$e['message']."]";
             		}
             	} 	
-                
+            	
+            	// Select all records, render and display all records and form elements for editing, adding, deleting records
 				$sql="SELECT * FROM users";
                 $stid = oci_parse($conn, $sql);
                 $res = oci_execute($stid);
@@ -86,10 +98,7 @@
                 }
                 else {
                 ?>    
-               
-					<h2>User Management Module</h2>
-					<a href='adminMenu.php'>Administrator menu</a><br><br>
-					
+
 					<div class="tabGroup">
 				    <input type="radio" name="tabGroup1" id="rad1" class="tab1" checked="checked"/>
 				    <label for="rad1">Users</label>
@@ -115,10 +124,13 @@
 					    <th> <div align="center">Person_id </div></th>
 					    <th> <div align="center">Date_Registered </div></th>
 					</tr>
-  					<?php 
+  					<?php
+  					
+  					// Iterate through all selected rows
 					while ($row=oci_fetch_array($stid, OCI_BOTH)) 
 					{
-
+						// If edit button selected, enter editing mode with editable fields on the selected row
+						// Update button submits form to page (self) with POST using hidden button named Update
 						if( $row["USER_NAME"] == $_GET["keyID"] and $_GET["Action"] == "Edit")
 						{
 						?>
@@ -146,9 +158,11 @@
 							</div></td>
 						</tr>
 						<?php
-						}
-						else
-						{
+						} else {
+						// Render and display all record information for all non-edit mode rows
+						// Icon buttons for editing and deleting records:
+						// Edit button reloads page with edit POST action and record ID
+						// Delete button reloads page with delete GET action and record ID	
   						?>
 						  
 						    <tr>
@@ -164,8 +178,9 @@
 					   	<?php
 						}
 					}
-				  	?>
-						  	
+				// Render and display form fields for adding new record details and form submission
+				// Add button submits form to page (self) with POST using hidden button named Add
+			  	?>						  	
 				<tr>
 				    <td><div align="center"><input type="text" name="txtAdduser_name" size="15" ></div></td>
 				    <td><div align="center"><input type="text" name="txtAddpassword" size="15"></div></td>
