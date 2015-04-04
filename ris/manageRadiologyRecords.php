@@ -32,8 +32,8 @@ if (!sessionCheck()) {
 		$str .= ",'" . $_POST['txtAdddoctor_id'] . "' ";
 		$str .= ",'" . $_POST['txtAddradiologist_id'] . "' ";
 		$str .= ",'" . $_POST['txtAddtest_type'] . "' ";
-		$str .= ", TO_DATE('" . $_POST['txtAddprescribing_date'] . "', 'yyyy-mm-dd') ";
-		$str .= ", TO_DATE('" . $_POST['txtAddtest_date'] . "', 'yyyy-mm-dd') ";
+		$str .= ", TO_DATE('" . $_POST['txtAddprescribing_date'] . "', 'dd-mon-yy') ";
+		$str .= ", TO_DATE('" . $_POST['txtAddtest_date'] . "', 'dd-mon-yy') ";
 		$str .= ",'" . $_POST['txtAdddiagnosis'] . "' ";
 		$str .= ",'" . $_POST['txtAdddescription'] . "' ";
 		$str .= ")";
@@ -75,8 +75,10 @@ if (!sessionCheck()) {
 		$str .= ",doctor_id = '" . $_POST['txtEditdoctor_id'] . "' ";
 		$str .= ",radiologist_id = '" . $_POST['txtEditradiologist_id'] . "' ";
 		$str .= ",test_type = '" . $_POST['txtEdittest_type'] . "' ";
-		$str .= ",prescribing_date = TO_DATE('" . $_POST['txtEditprescribing_date'] . "', 'yyyy-mm-dd') ";
-		$str .= ",test_date = TO_DATE('" . $_POST['txtEdittest_date'] . "', 'yyyy-mm-dd') ";
+		//$str .= ",prescribing_date = '" . $_POST['txtEditprescribing_date'] . "' ";
+		//$str .= ",test_date = '" . $_POST['txtEdittest_date'] . "') ";
+		$str .= ",prescribing_date = TO_DATE('" . $_POST['txtEditprescribing_date'] . "', 'dd-mon-yy') ";
+		$str .= ",test_date = TO_DATE('" . $_POST['txtEdittest_date'] . "', 'dd-mon-yy') ";
 		$str .= ",diagnosis = '" . $_POST['txtEditdiagnosis'] . "' ";
 		$str .= ",description = '" . $_POST['txtEditdescription'] . "' ";
 		$str .= "where record_id = '" . $_POST['hdnEditrecord_id'] . "' ";
@@ -141,6 +143,7 @@ if (!sessionCheck()) {
 
 	// Select all records, render and display all records and form elements for editing, adding, deleting records
 	$sql  = "select * from radiology_record order by record_id";
+	//$sql  = "select RECORD_ID, PATIENT_ID, DOCTOR_ID, RADIOLOGIST_ID, TEST_TYPE, TO_DATE(PRESCRIBING_DATE, 'YYYY/MM/DD') AS PRESCRIBING_DATE, TO_DATE(TEST_DATE, 'YYYY/MM/DD') AS TEST_DATE, DIAGNOSIS, DESCRIPTION from radiology_record order by record_id";
 	$stid = oci_parse($conn, $sql);
 	$res  = oci_execute($stid);
 	if (!$res) {
@@ -159,8 +162,8 @@ if (!sessionCheck()) {
 			<th> <div align="center">Doctor ID </div></th>
 			<th> <div align="center">Radiologist ID </div></th>
 			<th> <div align="center">Test Type </div></th>
-			<th> <div align="center">Prescribing Date </div></th>
-			<th> <div align="center">Test Date </div></th>
+			<th> <div align="center">Prescribing Date (dd-mon-yy)</div></th>
+			<th> <div align="center">Test Date (dd-mon-yy) </div></th>
 			<th> <div align="center">Diagnosis </div></th>
 			<th> <div align="center">Description </div></th>
 		</tr>
@@ -180,8 +183,8 @@ if (!sessionCheck()) {
 					<td><div align="center"><input type="text" name="txtEditdoctor_id" size="15" value="<?php echo $row['DOCTOR_ID']; ?>"></div></td>
 					<td><div align="center"><input type="text" name="txtEditradiologist_id" size="15" value="<?php echo $row['RADIOLOGIST_ID']; ?>"></div></td>
 					<td><div align="center"><input type="text" name="txtEdittest_type" size="15" value="<?php echo $row['TEST_TYPE']; ?>"></div></td>
-					<td><div align="center"><input type="date" name="txtEditprescribing_date" size="15" value="<?php echo $row['TEST_DATE']; ?>"></div></td>
-					<td><div align="center"><input type="date" name="txtEdittest_date" size="15" value="<?php echo $row['PRESCRIBING_DATE']; ?>"></div></td>							
+					<td><div align="center"><input type="text" name="txtEditprescribing_date" size="15" value="<?php echo $row['PRESCRIBING_DATE']; ?>"></div></td>
+					<td><div align="center"><input type="text" name="txtEdittest_date" size="15" value="<?php echo $row['TEST_DATE']; ?>"></div></td>							
 					<td><div align="center"><input type="text" name="txtEditdiagnosis" size="15" value="<?php echo $row['DIAGNOSIS']; ?>"></div></td>	
 					<td><div align="center"><input type="text" name="txtEditdescription" size="15" value="<?php echo $row['DESCRIPTION']; ?>"></div></td>
 					<td colspan="2" align="right"><div align="center">
@@ -226,8 +229,8 @@ if (!sessionCheck()) {
 				    <td><div align="center"><input type="text" name="txtAdddoctor_id"  size="1"></div></td>
 					<td><div align="center"><input type="text" name="txtAddradiologist_id"  size="2"></div></td>
 				    <td><div align="center"><input type="text" name="txtAddtest_type"  size="15"></div></td>				  				    
-					<td><div align="center"><input type="date" name="txtAddprescribing_date" size="10" ></div></td>
-					<td><div align="center"><input type="date" name="txtAddtest_date" size="10" ></div></td>							
+					<td><div align="center"><input type="text" name="txtAddprescribing_date" size="10" ></div></td>
+					<td><div align="center"><input type="text" name="txtAddtest_date" size="10" ></div></td>							
 					<td><div align="center"><input type="text" name="txtAdddiagnosis" size="15" ></div></td>	
 					<td><div align="center"><input type="text" name="txtAdddescription" size="15" ></div></td>				    
 				    <td colspan="2" align="right"><div align="center">
