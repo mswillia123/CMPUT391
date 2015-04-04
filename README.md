@@ -5,9 +5,10 @@
 Installation
 ------------
 1. Extract files into Apache web server directory.
-2. Launch SQL plus and run the database installation file: @ris_setup
-3. Open PHPconnectionDB.php and enter your OracleDB credentials.
-4. Open loginModule.php in a browser to access the website.
+2. Change permissions to 755 or 644 of all files using chmod.
+3. Launch SQL plus and run the database installation file: @ris_setup
+4. Open PHPconnectionDB.php and enter your OracleDB credentials.
+5. Open loginModule.php in a browser to access the website.
 
 
 ------------
