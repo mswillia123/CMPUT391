@@ -32,6 +32,22 @@ if (!sessionCheck()) {
 	header('Location: loginModule.php');
 
 } else {
+
+
+	$query ="CREATE VIEW view_uscustomers AS
+SELECT customerid, customername FROM customers WHERE countryid='US';"
+
+		$query = "SELECT R.PATIENT_ID, R.TEST_DATE, R.TEST_TYPE"
+		.$patient_format.$test_format.$date_format
+		." ,COUNT(*) as images "
+		."FROM RADIOLOGY_RECORD R, PACS_IMAGES P "
+		."WHERE R.RECORD_ID = P.RECORD_ID "
+		."GROUP BY ROLLUP ("
+		.$patient_format.$test_format.$date_rollup
+		.") ";
+
+
+
 	
 	if (isset($_POST['submit']))  {	
 

@@ -10,6 +10,12 @@
 <head><link href="base.css" rel="stylesheet" type="text/css"></head>
     <body>
         <?php
+			// warning handler prevents system printing of warning messages
+			// these messages handled individually at the code level
+			function warning_handler($errno, $errstr) { 
+				//no message to be printed, 
+			}
+			set_error_handler("warning_handler", E_WARNING);
 			
             include("sessionCheck.php");
             include("PHPconnectionDB.php");
@@ -44,7 +50,7 @@
             		else
             		{
             			$e = oci_error($stid);
-            			echo "Error Add [".$e['message']."]";
+            			echo "Error Adding the record: please verify the input is properly formatted [".$e['message']."]";
             		}
             	}
 				
@@ -67,7 +73,7 @@
             		else
             		{
             			$e = oci_error($stid);
-            			echo "Error Update [".$e['message']."]";
+            			echo "Error Updating the record: please verify the input is properly formatted [".$e['message']."]";
             		}
             	}
             	
@@ -84,7 +90,7 @@
             		else
             		{
             			$e = oci_error($stid);
-            			echo "Error Delete [".$e['message']."]";
+            			echo "Error Deleting the record [".$e['message']."]";
             		}
             	} 	
             	
@@ -97,7 +103,7 @@
                     echo htmlentities($err['message']);
                 }
                 else {
-                ?>    
+?>    
 
 					<div class="tabGroup">
 				    <input type="radio" name="tabGroup1" id="rad1" class="tab1" checked="checked"/>
@@ -133,7 +139,7 @@
 						// Update button submits form to page (self) with POST using hidden button named Update
 						if( $row["USER_NAME"] == $_GET["keyID"] and $_GET["Action"] == "Edit")
 						{
-						?>
+?>
 						<tr>
 							<td><div align="center">
 								<input type="text" name="txtEdituser_name"  size="15" value="<?php echo $row['USER_NAME'];?>">
@@ -163,7 +169,7 @@
 						// Icon buttons for editing and deleting records:
 						// Edit button reloads page with edit POST action and record ID
 						// Delete button reloads page with delete GET action and record ID	
-  						?>
+?>
 						  
 						    <tr>
 							    <td><div align="center"><?php echo $row["USER_NAME"];?></div></td>
@@ -180,7 +186,7 @@
 					}
 				// Render and display form fields for adding new record details and form submission
 				// Add button submits form to page (self) with POST using hidden button named Add
-			  	?>						  	
+?>						  	
 				<tr>
 				    <td><div align="center"><input type="text" name="txtAdduser_name" size="15" ></div></td>
 				    <td><div align="center"><input type="text" name="txtAddpassword" size="15"></div></td>
@@ -195,13 +201,13 @@
 		</form>
 		<?php
 		}
-		?>
+?>
 		</div>
 		<div class="tab2"></div>
 	    <div class="tab3"></div>
 		</div>
 	<?php 
     }
-	?>					
+?>					
     </body>
 </html>

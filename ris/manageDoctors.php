@@ -11,6 +11,13 @@
 <head><link href="base.css" rel="stylesheet" type="text/css"></head>
     <body>
         <?php
+        
+        	// warning handler prevents system printing of warning messages
+        	// this is handled individually at the code level
+        	function warning_handler($errno, $errstr) { 
+				//no message to be printed, 
+			}
+			set_error_handler("warning_handler", E_WARNING);
 			
             include("sessionCheck.php");
             include("PHPconnectionDB.php");
@@ -45,7 +52,7 @@
             		else
             		{
             			$e = oci_error($stid);
-            			echo "Error Add [".$e['message']."]";
+            			echo "Error Adding record: please verify the input is properly formatted [".$e['message']."]";
             		}
 
             	}
@@ -53,7 +60,7 @@
 				// Update button selected: Update existing DB record from edited changes to row
             	if($_POST['hdnCmd'] == "Update")
             	{
-
+					//try{
             		$str = "UPDATE FAMILY_DOCTOR SET ";
             		$str .="DOCTOR_ID = '".$_POST['txtEditdoctor_id']."' ";
             		$str .=",PATIENT_ID = '".$_POST['txtEditpatient_id']."' ";
@@ -62,16 +69,30 @@
             		$str .="AND PATIENT_ID = '".$_POST['hdnEditpatient_id']."'";
             		$stid = oci_parse($conn, $str);     
             		$res = oci_execute($stid);
+            		
+        			/*
+            			oci_commit($conn);
+            			}
+        			catch (Exception $e) {
+            		
+            			echo "INVALID";
+            			
+            		}
+            		*/
+            		
             		if($res)
             		{
             			oci_commit($conn);
             		}
+
+            		
             		else
             		{
+            		
             			$e = oci_error($stid);
-            			echo "Error Update [".$e['message']."]";
+            			echo "Error updating record: please verify the input is properly formatted [".$e['message']."]"; 
             		}
-
+					
             	}
             	
 				// Delete button selected: Delete an existing record
@@ -87,7 +108,7 @@
             		else
             		{
             			$e = oci_error($stid);
-            			echo "Error Delete [".$e['message']."]";
+            			echo "Error deleting record [".$e['message']."]";
             		}
             	} 	
                 
@@ -187,7 +208,6 @@
 		}
 		?>
 		</div>
-
 
 	<?php 
     }
