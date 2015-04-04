@@ -89,7 +89,7 @@
             	} 	
             	
             	// Select all records, render and display all records and form elements for editing, adding, deleting records
-				$sql="SELECT * FROM users";
+				$sql="SELECT * FROM users ORDER BY user_name";
                 $stid = oci_parse($conn, $sql);
                 $res = oci_execute($stid);
                 if (!$res) {

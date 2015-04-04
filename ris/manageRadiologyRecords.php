@@ -1,5 +1,5 @@
 <!--
-	Manage Radiology Records:
+	Upload Module - Radiology Record Management and Image Upload:
 	Update or delete existing records, create new records, add images to records.
 	
 	Author: Michael Williams
@@ -18,7 +18,7 @@ if (!sessionCheck()) {
 	header('Location: loginModule.php');
 } else {
 	
-	echo "<h2>Radiology Record Module</h2>";
+	echo "<h2>Radiology Record Management / Image Upload</h2>";
 	userInfoDisplay();
 	echo "<a href='radiologistMenu.php'> Radiologist menu</a><p>";
 	error_reporting(E_ALL ^ E_NOTICE);

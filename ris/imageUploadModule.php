@@ -125,9 +125,9 @@ if (!sessionCheck()) {
 		//php GD internal representation before passing to uploadImage
 		$src = imagecreatefromjpeg($_FILES['image']['tmp_name']);
 		ob_start();
-    imagejpeg($src);
-    $final_image = ob_get_clean();
-    //Store full sized image to DB
+    	imagejpeg($src);
+   	 	$final_image = ob_get_clean();
+    	//Store full sized image to DB
 		uploadImage($final_image, $recordID, $imageID, 'FULL_SIZE');
 		
 		//Call resize function (imageResize.php) to resize to regular size image and store to DB

@@ -11,12 +11,10 @@
 function multi_image($recordID, $imageType){
 	$conn = connect();
 	// Select all image_ID associated with record_ID
-	$sql = "SELECT IMAGE_ID, ".$imageType." FROM PACS_IMAGES WHERE RECORD_ID = ".$recordID." AND ".$imageType." IS NOT NULL";
-	echo $query;
-	$stid = oci_parse($conn, $sql);
+	$query = "SELECT IMAGE_ID, ".$imageType." FROM PACS_IMAGES WHERE RECORD_ID = ".$recordID." AND ".$imageType." IS NOT NULL";
+	$stid = oci_parse($conn, $query);
 	oci_execute($stid);
 	echo "<table ><tr>";
-	echo $query;
 	// Display image of specified type (thumbnail, regular, full size)
 	while($row = oci_fetch_array($stid, OCI_ASSOC)){
 		if (!$row) {

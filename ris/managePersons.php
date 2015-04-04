@@ -78,7 +78,7 @@ if (!sessionCheck()) {
 	}
 	
 	// Select all records, render and display all records and form elements for editing, adding, deleting records
-	$sql  = "SELECT * FROM persons";
+	$sql  = "SELECT * FROM persons ORDER BY person_id";
 	$stid = oci_parse($conn, $sql);
 	$res  = oci_execute($stid);
 	

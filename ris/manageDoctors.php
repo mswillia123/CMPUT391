@@ -92,7 +92,7 @@
             	} 	
                 
             	// Select all records, render and display all records and form elements for editing, adding, deleting records
-				$sql="SELECT * FROM FAMILY_DOCTOR";
+				$sql="SELECT * FROM FAMILY_DOCTOR ORDER BY DOCTOR_ID";
                 $stid = oci_parse($conn, $sql);
                 $res = oci_execute($stid);
                 if (!$res) {
